@@ -20,6 +20,8 @@ from tkinter import messagebox
 import random
 
 
+#print(s.theme_names())
+
     
     
 def Geldrechner(money, level,rundungslevel):
@@ -39,56 +41,51 @@ def Geldrechner(money, level,rundungslevel):
         else:
             moneystring=str(int(Dukaten)) + ' Dukaten '
     if Silber>=1:
-        if rundungslevel=='Silber': 
+        if rundungslevel=='Silber' and rundungslevel!='Dukaten': 
             moneystring=moneystring+str(int(round(Silber,0))) + ' Silber '
             return moneystring
         else:
             moneystring=moneystring+str(int(Silber)) + ' Silber '
-    if Heller>=1:
+    if Heller>=1 and rundungslevel!='Silber' and rundungslevel!='Dukaten':
         if rundungslevel=='Heller': 
             moneystring= moneystring+str(int(round(Heller,0))) + ' Heller '
             return moneystring
         else:
             moneystring=moneystring+str(int(Heller)) + ' Heller '
-    if Kreuzer>=1:
+    if Kreuzer>=1 and rundungslevel!='Silber' and rundungslevel!='Dukaten' and rundungslevel!='Heller':
         moneystring=moneystring+str(int(round(Kreuzer,0)))+ ' Kreuzer '
     return moneystring
 
 
 def GeldrechnerKurz(money, level,rundungslevel):
     moneystring=''
-    money=int(money) 
-    print('Money: '+ str(money))       
+    money=int(money)      
     Kreuzer=money%10
-    print('Kreuzer: '+ str(Kreuzer))
     money=money/10
     Heller=money%10
-    print('Heller: '+ str(Heller))
     money=money/10
     Silber=money%10
-    print('Silber: '+ str(Silber))
     Dukaten=money/10
-    print('Dukaten: ' +str(Dukaten))
     
     if Dukaten>=1:
         if rundungslevel=='Dukaten': 
-            moneystring=moneystring+ str(int(round(Dukaten,0))) + ' D '
+            moneystring= str(int(round(Dukaten,0))) + ' D '
             return moneystring
         else:
-            moneystring=moneystring+str(int(Dukaten)) + ' D '
+            moneystring=str(int(Dukaten)) + ' D '
     if Silber>=1:
-        if rundungslevel=='Silber': 
-            moneystring=moneystring+ str(int(round(Silber,0))) + ' S '
+        if rundungslevel=='Silber' and rundungslevel!='Dukaten': 
+            moneystring=moneystring+str(int(round(Silber,0))) + ' S '
             return moneystring
         else:
             moneystring=moneystring+str(int(Silber)) + ' S '
-    if Heller>=1:
+    if Heller>=1 and rundungslevel!='Silber' and rundungslevel!='Dukaten':
         if rundungslevel=='Heller': 
             moneystring= moneystring+str(int(round(Heller,0))) + ' H '
             return moneystring
         else:
             moneystring=moneystring+str(int(Heller)) + ' H '
-    if Kreuzer>=1:
+    if Kreuzer>=1 and rundungslevel!='Silber' and rundungslevel!='Dukaten' and rundungslevel!='Heller':
         moneystring=moneystring+str(int(round(Kreuzer,0)))+ ' K '
     return moneystring
     
@@ -100,7 +97,7 @@ class PTools(tk.Tk):
         tk.Tk.__init__(self)
         #self.geometry("%dx%d"%(self.winfo_screenwidth()-200,self.winfo_screenheight()-200))
         self._frame = None
-        self.configure(background='#4c4c4c') 
+        
         self.title("Odatas Meister Tools")
         self.switch_frame(StartPage)
 
@@ -113,51 +110,52 @@ class PTools(tk.Tk):
         self._frame.pack(anchor='center')    
 
 
-class StartPage(tk.Frame):
+class StartPage(ttk.Frame):
 
     def __init__(self, master):        
         
+        s=ttk.Style()
+        s.theme_use('winnative')
         
+        ttk.Frame.__init__(self, master)
         
-        tk.Frame.__init__(self, master)
-
-        alles=tk.Frame(self,background='#4c4c4c')
+        alles=ttk.Frame(self)
         alles.pack(padx=100)
-        version=tk.Frame(self,background='#4c4c4c')
+        version=ttk.Frame(self)
         version.pack(anchor='e')
-        self.configure(background='#4c4c4c')      
+    
                        
-        self.Name=tk.Label(alles,text="Odatas Meistertools", font='Arial 18 bold',bg='#4c4c4c',fg='white')
+        self.Name=ttk.Label(alles,text="Odatas Meistertools", font='Arial 18 bold')
         self.Name.pack(pady=30)
         
-        self.Hilfe=tk.Label(alles,text="Diese Alpha Version ist noch ziemlich kacke. Mal schauen ob es besser wird.\n Feedback an Odatas auf Reddit",background='#4c4c4c',foreground='white')
+        self.Hilfe=ttk.Label(alles,text="Diese Alpha Version ist noch ziemlich kacke. Mal schauen ob es besser wird.\n Feedback an Odatas auf Reddit")
         self.Hilfe.pack(pady=20)
         
-        self.button1 =tk.Button(alles, text ="Reisehelfer",command=lambda: master.switch_frame(PageTravel),width=50,height=2) #command linked
+        self.button1 =ttk.Button(alles, text ="Reisehelfer",command=lambda: master.switch_frame(PageTravel),width=50) #command linked
         self.button1.pack()
         
-        self.button2=tk.Button(alles, text ="Hier kommt noch was (NPC Randomizer)",width=50,height=2)
+        self.button2=ttk.Button(alles, text ="Hier kommt noch was (NPC Randomizer)",width=50)
         self.button2.pack()
         
-        self.button3=tk.Button(alles, text ="Hier auch (Gefahrenübersicht)",width=50,height=2)
+        self.button3=ttk.Button(alles, text ="Hier auch (Gefahrenübersicht)",width=50)
         self.button3.pack()
         
-        self.button4=tk.Button(alles, text ="Kontakt",command=lambda: master.switch_frame(PageContact),width=50,height=2)
+        self.button4=ttk.Button(alles, text ="Kontakt",command=lambda: master.switch_frame(PageContact),width=50)
         self.button4.pack()
         
        
-        tk.Button(alles, text="Quit", command=self.master.destroy,width=50,height=2).pack(pady=30)
+        ttk.Button(alles, text="Quit", command=self.master.destroy,width=50).pack(pady=30)
         
-        self.version=tk.Label(version,text="Version Alpha 0.11",background='#4c4c4c',foreground='white')
+        self.version=ttk.Label(version,text="Version Alpha 0.11")
         self.version.pack(anchor='se')
 
         
 
 
-class PageTravel(tk.Frame):
+class PageTravel(ttk.Frame):
 
     def __init__(self, master):
-        tk.Frame.__init__(self, master)
+        ttk.Frame.__init__(self, master)
         
         eingaben=tk.Frame(self)
         eingaben.grid(row=0,column=0,pady=10,padx=(100,0),sticky='w')
@@ -178,7 +176,8 @@ class PageTravel(tk.Frame):
         knöpfe.grid(row=3,column=1,pady=10,padx=100)
         
         
-        def ButtonPress():
+        def ButtonPress(event=None):
+         
             try:                
                 #Gruppengröße
                 gruppengröße=int(eingabe1.get())
@@ -235,29 +234,85 @@ class PageTravel(tk.Frame):
                 self.eingabe7.insert(0,"0")
                 pferdReise=0
           
-            rundung=change_dropdown()
+            rundung=comboBoxRundung.get()
             
-            daysToTravel=pferdReise/speedHorse+fußWeg/speedFuß+FlusskahnWeg/speedFlusskahn+reiseKutschenWeg/speedReiseKutsche+seeReiseWegM/speedShip+seeReiseWegK/speedShip
-            self.travelDays.config(text=str(int(daysToTravel))+ " Tage")
+            wegZustand=comboBoxWege.get()
+            
+            if wegZustand=='Perfekt(100%)':
+                chance=1
+            if wegZustand=='Gut(80%)':
+                chance=0.8
+            if wegZustand=='Mittel(60%)':
+                chance=0.6
+            if wegZustand=='Schlecht(40%)':
+                chance=0.4
+           
+            daysToTravel=0
+            
+            
+            
+            simulation=1
+            
             transportCost=gruppengröße*(FlusskahnWeg*kostenFlusskahn+reiseKutschenWeg*kostenReisekutsche+seeReiseWegM*kostenSeereiseHängematte+seeReiseWegK*kostenSeereiseKabine)/100
-            print('Transportkosten: '+ str(transportCost))
-            self.transportKosten.config(text=Geldrechner(transportCost,'Silber',rundung))
             
+            if simulation==1:
+                while pferdReise>0:
+                    daySlow=1/(random.randint(chance*100,100)/100)
+                    daysToTravel=daysToTravel+1
+                    pferdReise=pferdReise-(pferdReise*daySlow)
+                    
+                while fußWeg>0:
+                    daySlow=(random.randint(chance*100,100)/100)
+                    print(daySlow)
+                    daysToTravel=daysToTravel+1
+                    fußWeg=fußWeg-(speedFuß*daySlow)
+                    
+                while FlusskahnWeg>0:
+                    daySlow=(random.randint(chance*100,100)/100)
+                    daysToTravel=daysToTravel+1
+                    FlusskahnWeg=FlusskahnWeg-(speedFlusskahn*daySlow)
+                    
+                while reiseKutschenWeg>0:
+                    daySlow=(random.randint(chance*100,100)/100)
+                    daysToTravel=daysToTravel+1
+                    reiseKutschenWeg=reiseKutschenWeg-(speedReiseKutsche*daySlow)
+                    
+                while seeReiseWegM>0:
+                    daySlow=(random.randint(chance*100,100)/100)
+                    daysToTravel=daysToTravel+1
+                    seeReiseWegM=seeReiseWegM-(speedShip*daySlow)
+                    
+                while seeReiseWegK>0:
+                    daySlow=(random.randint(chance*100,100)/100)
+                    daysToTravel=daysToTravel+1
+                    seeReiseWegK=seeReiseWegK-(speedShip*daySlow)
+                
+                
+            else:
+                daysToTravel=(pferdReise/speedHorse+fußWeg/speedFuß+FlusskahnWeg/speedFlusskahn+reiseKutschenWeg/speedReiseKutsche+seeReiseWegM/speedShip+seeReiseWegK/speedShip)*(1/chance)
+                
+            
+            
+            
+            self.travelDays.config(text=str(int(daysToTravel))+ " Tage")            
+            self.transportKosten.config(text=Geldrechner(transportCost,'Silber',rundung))
             
             
             food=0
             water=0
             travelersCount=int(gruppengröße)
-            for x in range(int(daysToTravel)):
-                dayKategory=random.randint(1,10)
-                if dayKategory>2 :
-                    dayHard=random.randint(8,12)/10
-                else:
-                    dayHard=dayHard=random.randint(10,20)/10
-                foodNeed=foodPerDay*travelersCount*dayHard
-                waterNeed=waterPerDay*travelersCount*dayHard
-                food=food+foodNeed
-                water=water+waterNeed
+            if simulation==1:
+                for x in range(int(daysToTravel)):
+                    dayHard=1/(random.randint(chance*100,100)/100)
+                    
+                        
+                    foodNeed=foodPerDay*travelersCount*dayHard
+                    waterNeed=waterPerDay*travelersCount*dayHard
+                    food=food+foodNeed
+                    water=water+waterNeed
+            else:
+                foodNeed=foodPerDay*travelersCount*daysToTravel*(1/chance)
+                waterNeed=waterPerDay*travelersCount*daysToTravel*(1/chance)
                
                 
             
@@ -270,8 +325,8 @@ class PageTravel(tk.Frame):
             
        
             
-            tabelle01.config(text="Handeln")
-            tabelle02.config(text="Für wenn die Spieler auf Handeln würfeln wollen")
+            tabelle01.config(text="Fertigkeitsprobe: Handeln")
+            #tabelle02.config(text="Für wenn die Spieler auf Handeln würfeln wollen")
             tabelle11.config(text="Fehlschlag")
             tabelle21.config(text="Normalpreis")
             tabelle31.config(text="QS 1: FP 0-3")
@@ -421,83 +476,96 @@ class PageTravel(tk.Frame):
         speedHorse=50
         
         
+       
+        
+
+
       
         
         
         
-        
-        
         #eingaben
-        numberLabel1=tk.Label(eingaben,text="Gruppengröße",font='Arial 14')
+        numberLabel1=ttk.Label(eingaben,text="Gruppengröße",font='Arial 14')
         numberLabel1.grid(row=1,column=1,sticky='w')         
-        eingabe1=tk.Entry(eingaben)
+        eingabe1=ttk.Entry(eingaben)
         eingabe1.insert(0,"1")
-        eingabe1.grid(row=1,column=2)
+        eingabe1.grid(row=1,column=2,sticky='w')
         
-        self.distanz=tk.Label(eingaben,text="Distanzen in ganzen Meilen:",font='Arial 12 bold')
-        self.distanz.grid(row=2,column=1)
+        self.distanz=ttk.Label(eingaben,text="Distanzen in ganzen Meilen:",font='Arial 12 bold')
+        self.distanz.grid(row=2,column=1,sticky='w')
          
-        self.numberLabel2=tk.Label(eingaben,text="Zu Fuß",font='Arial 10')
+        self.numberLabel2=ttk.Label(eingaben,text="Zu Fuß",font='Arial 10')
         self.numberLabel2.grid(row=3,column=1,sticky='w')
-        self.eingabe2=tk.Entry(eingaben)
+        self.eingabe2=ttk.Entry(eingaben)
         self.eingabe2.insert(0,"0")
-        self.eingabe2.grid(row=3,column=2)
+        self.eingabe2.grid(row=3,column=2,sticky='w')
          
-        self.numberLabel3=tk.Label(eingaben,text="Flusskahn",font='Arial 10')
+        self.numberLabel3=ttk.Label(eingaben,text="Flusskahn",font='Arial 10')
         self.numberLabel3.grid(row=4,column=1,sticky='w')
-        self.eingabe3=tk.Entry(eingaben)
+        self.eingabe3=ttk.Entry(eingaben)
         self.eingabe3.insert(3,"0")
-        self.eingabe3.grid(row=4,column=2)
+        self.eingabe3.grid(row=4,column=2,sticky='w')
          
-        self.numberLabel4=tk.Label(eingaben,text="Reisekutsche",font='Arial 10')
+        self.numberLabel4=ttk.Label(eingaben,text="Reisekutsche",font='Arial 10')
         self.numberLabel4.grid(row=5,column=1,sticky='w')
-        self.eingabe4=tk.Entry(eingaben)
+        self.eingabe4=ttk.Entry(eingaben)
         self.eingabe4.insert(0,"0")
-        self.eingabe4.grid(row=5,column=2)
+        self.eingabe4.grid(row=5,column=2,sticky='w')
          
-        self.numberLabel5=tk.Label(eingaben,text="Seereise, Hängematte",font='Arial 10')
+        self.numberLabel5=ttk.Label(eingaben,text="Seereise, Hängematte",font='Arial 10')
         self.numberLabel5.grid(row=6,column=1,sticky='w')   
-        self.eingabe5=tk.Entry(eingaben)
+        self.eingabe5=ttk.Entry(eingaben)
         self.eingabe5.insert(0,"0")
-        self.eingabe5.grid(row=6,column=2)
+        self.eingabe5.grid(row=6,column=2,sticky='w')
         
-        self.numberLabel6=tk.Label(eingaben,text="Seereise, Kabine",font='Arial 10')
+        self.numberLabel6=ttk.Label(eingaben,text="Seereise, Kabine",font='Arial 10')
         self.numberLabel6.grid(row=7,column=1,sticky='w')   
-        self.eingabe6=tk.Entry(eingaben)
+        self.eingabe6=ttk.Entry(eingaben)
         self.eingabe6.insert(0,"0")
-        self.eingabe6.grid(row=7,column=2)
+        self.eingabe6.grid(row=7,column=2,sticky='w')
         
-        self.numberLabel7=tk.Label(eingaben,text="Pferd Reitend",font='Arial 10')
+        self.numberLabel7=ttk.Label(eingaben,text="Pferd Reitend",font='Arial 10')
         self.numberLabel7.grid(row=8,column=1,sticky='w')   
-        self.eingabe7=tk.Entry(eingaben)
+        self.eingabe7=ttk.Entry(eingaben)
         self.eingabe7.insert(0,"0")
-        self.eingabe7.grid(row=8,column=2)
+        self.eingabe7.grid(row=8,column=2,sticky='w')
+        
+        auswahlWege = ['Perfekt(100%)', 'Gut(80%)', 'Mittel(60%)','Schlecht(40%)']
+        
+        ttk.Label(eingaben,text="").grid(row=9,columns=2)
+
+        
+        
+        ttk.Label(eingaben,text="Geschwindigkeit durch\nWegbeschaffenheit \nund Umwelteinflüsse").grid(row=10,column=1,sticky='w')
+        comboBoxWege=ttk.Combobox(eingaben,values=auswahlWege,state="readonly")
+        comboBoxWege.grid(row=10,column=2)  
+        comboBoxWege.set('Gut(80%)')
         
         #berechnungsbutton
-        self.calculation=tk.Button(berechnungsbutton,text="Berechnen",command=ButtonPress,width=50)
+        self.calculation=ttk.Button(berechnungsbutton,text="Berechnen",command=ButtonPress,width=50)
         self.calculation.grid(row=20,column=1,pady=10,sticky='w') 
         
         
         #anzeigen
-        self.travelDayslabel=tk.Label(anzeigen,text="Reisedauer:",font='Arial 10 bold')
+        self.travelDayslabel=ttk.Label(anzeigen,text="Reisedauer:",font='Arial 10 bold')
         self.travelDayslabel.grid(row=1,column=1,sticky='w')
-        self.travelDays=tk.Label(anzeigen,text="0 Tage",font='Arial 10 bold')
+        self.travelDays=ttk.Label(anzeigen,text="0 Tage",font='Arial 10 bold')
         self.travelDays.grid(row=1,column=2,sticky='w')
         
-        self.foodCostlabel=tk.Label(anzeigen,text="Kosten für Proviant:",font='Arial 10 bold')
+        self.foodCostlabel=ttk.Label(anzeigen,text="Kosten für Proviant:",font='Arial 10 bold')
         self.foodCostlabel.grid(row=2,column=1,sticky='w')
-        self.foodCost=tk.Label(anzeigen,text="0 Dukaten 0 Silber 0 Heller 0 Kreuzer",font='Arial 10 bold')
+        self.foodCost=ttk.Label(anzeigen,text="0 Dukaten 0 Silber 0 Heller 0 Kreuzer",font='Arial 10 bold')
         self.foodCost.grid(row=2,column=2,sticky='w')
 
         
-        self.transportKostenlabel=tk.Label(anzeigen,text="Kosten für Transport:",font='Arial 10 bold')
+        self.transportKostenlabel=ttk.Label(anzeigen,text="Kosten für Transport:",font='Arial 10 bold')
         self.transportKostenlabel.grid(row=3,column=1,sticky='w')
-        self.transportKosten=tk.Label(anzeigen,text="0 Dukaten 0 Silber 0 Heller 0 Kreuzer",font='Arial 10 bold')
+        self.transportKosten=ttk.Label(anzeigen,text="0 Dukaten 0 Silber 0 Heller 0 Kreuzer",font='Arial 10 bold')
         self.transportKosten.grid(row=3,column=2,sticky='w')
         
-        self.travelAlllabel=tk.Label(anzeigen,text="Kosten Gesamt: ",font='Arial 10 bold')
+        self.travelAlllabel=ttk.Label(anzeigen,text="Kosten Gesamt: ",font='Arial 10 bold')
         self.travelAlllabel.grid(row=4,column=1,sticky='w')
-        self.travelAll=tk.Label(anzeigen,text="0 Dukaten 0 Silber 0 Heller 0 Kreuzer",font='Arial 10 bold')
+        self.travelAll=ttk.Label(anzeigen,text="0 Dukaten 0 Silber 0 Heller 0 Kreuzer",font='Arial 10 bold')
         self.travelAll.grid(row=4,column=2,sticky='w')
         
         
@@ -506,228 +574,213 @@ class PageTravel(tk.Frame):
         
         
         #COLUMN 1 Beschriftung
-        tabelle01=tk.Label(tabelle,text="",font='Arial 14 bold')
+        tabelle01=ttk.Label(tabelle,text="",font='Arial 14 bold')
         tabelle01.grid(row=1,column=1,pady=(0,20),sticky='w')
         
-        tabelle02=tk.Label(tabelle,text="",font='Arial 10 ')
+        tabelle02=ttk.Label(tabelle,text="",font='Arial 10 ')
         tabelle02.grid(row=1,column=2,pady=(0,20),sticky='w',columnspan=5)
         
-        tabelle11=tk.Label(tabelle,text="",font='Arial 10 bold')
+        tabelle11=ttk.Label(tabelle,text="",font='Arial 10 bold')
         tabelle11.grid(row=3,column=1,sticky='w')
         
-        tabelle21=tk.Label(tabelle,text="",font='Arial 10 bold')
+        tabelle21=ttk.Label(tabelle,text="",font='Arial 10 bold')
         tabelle21.grid(row=4,column=1,sticky='w')
         
-        tabelle31=tk.Label(tabelle,text="",font='Arial 10 bold')
+        tabelle31=ttk.Label(tabelle,text="",font='Arial 10 bold')
         tabelle31.grid(row=5,column=1,sticky='w')
         
-        tabelle41=tk.Label(tabelle,text="",font='Arial 10 bold')
+        tabelle41=ttk.Label(tabelle,text="",font='Arial 10 bold')
         tabelle41.grid(row=6,column=1,sticky='w')
         
-        tabelle51=tk.Label(tabelle,text="",font='Arial 10 bold')
+        tabelle51=ttk.Label(tabelle,text="",font='Arial 10 bold')
         tabelle51.grid(row=7,column=1,sticky='w')
         
-        tabelle61=tk.Label(tabelle,text="",font='Arial 10 bold')
+        tabelle61=ttk.Label(tabelle,text="",font='Arial 10 bold')
         tabelle61.grid(row=8,column=1,sticky='w')
         
-        tabelle71=tk.Label(tabelle,text="",font='Arial 10 bold')
+        tabelle71=ttk.Label(tabelle,text="",font='Arial 10 bold')
         tabelle71.grid(row=9,column=1,sticky='w')
         
-        tabelle81=tk.Label(tabelle,text="",font='Arial 10 bold')
+        tabelle81=ttk.Label(tabelle,text="",font='Arial 10 bold')
         tabelle81.grid(row=10,column=1,sticky='w')
         
         
         
             
         #COLUMN 2 Proviant
-        tabelle12=tk.Label(tabelle,text="",font='Arial 10 bold')
+        tabelle12=ttk.Label(tabelle,text="",font='Arial 10 bold')
         tabelle12.grid(row=2,column=2,sticky='e')
         
         
-        tabelle22=tk.Label(tabelle,text="",font='Arial 10')
+        tabelle22=ttk.Label(tabelle,text="",font='Arial 10')
         tabelle22.grid(row=3,column=2,sticky='e')
         
-        tabelle32=tk.Label(tabelle,text="",font='Arial 10')
+        tabelle32=ttk.Label(tabelle,text="",font='Arial 10')
         tabelle32.grid(row=4,column=2,sticky='e')
         
-        tabelle42=tk.Label(tabelle,text="",font='Arial 10')
+        tabelle42=ttk.Label(tabelle,text="",font='Arial 10')
         tabelle42.grid(row=5,column=2,sticky='e')
         
-        tabelle52=tk.Label(tabelle,text="",font='Arial 10')
+        tabelle52=ttk.Label(tabelle,text="",font='Arial 10')
         tabelle52.grid(row=6,column=2,sticky='e')
         
-        tabelle62=tk.Label(tabelle,text="",font='Arial 10')
+        tabelle62=ttk.Label(tabelle,text="",font='Arial 10')
         tabelle62.grid(row=7,column=2,sticky='e')
         
-        tabelle72=tk.Label(tabelle,text="",font='Arial 10')
+        tabelle72=ttk.Label(tabelle,text="",font='Arial 10')
         tabelle72.grid(row=8,column=2,sticky='e')
         
-        tabelle82=tk.Label(tabelle,text="",font='Arial 10')
+        tabelle82=ttk.Label(tabelle,text="",font='Arial 10')
         tabelle82.grid(row=9,column=2,sticky='e')
         
-        tabelle92=tk.Label(tabelle,text="",font='Arial 10')
+        tabelle92=ttk.Label(tabelle,text="",font='Arial 10')
         tabelle92.grid(row=10,column=2,sticky='e')
         
         #COLUMN 3 Flusskahn
-        tabelle13=tk.Label(tabelle,text="",font='Arial 10 bold')
+        tabelle13=ttk.Label(tabelle,text="",font='Arial 10 bold')
         tabelle13.grid(row=2,column=3,sticky='e')
         
         
-        tabelle23=tk.Label(tabelle,text="",font='Arial 10')
+        tabelle23=ttk.Label(tabelle,text="",font='Arial 10')
         tabelle23.grid(row=3,column=3,sticky='e')
         
-        tabelle33=tk.Label(tabelle,text="",font='Arial 10')
+        tabelle33=ttk.Label(tabelle,text="",font='Arial 10')
         tabelle33.grid(row=4,column=3,sticky='e')
         
-        tabelle43=tk.Label(tabelle,text="",font='Arial 10')
+        tabelle43=ttk.Label(tabelle,text="",font='Arial 10')
         tabelle43.grid(row=5,column=3,sticky='e')
         
-        tabelle53=tk.Label(tabelle,text="",font='Arial 10')
+        tabelle53=ttk.Label(tabelle,text="",font='Arial 10')
         tabelle53.grid(row=6,column=3,sticky='e')
         
-        tabelle63=tk.Label(tabelle,text="",font='Arial 10')
+        tabelle63=ttk.Label(tabelle,text="",font='Arial 10')
         tabelle63.grid(row=7,column=3,sticky='e')
         
-        tabelle73=tk.Label(tabelle,text="",font='Arial 10')
+        tabelle73=ttk.Label(tabelle,text="",font='Arial 10')
         tabelle73.grid(row=8,column=3,sticky='e')
         
-        tabelle83=tk.Label(tabelle,text="",font='Arial 10')
+        tabelle83=ttk.Label(tabelle,text="",font='Arial 10')
         tabelle83.grid(row=9,column=3,sticky='e')
         
-        tabelle93=tk.Label(tabelle,text="",font='Arial 10')
+        tabelle93=ttk.Label(tabelle,text="",font='Arial 10')
         tabelle93.grid(row=10,column=3,sticky='e')
         
          #COLUMN 4 Reisekutsche
-        tabelle14=tk.Label(tabelle,text="",font='Arial 10 bold')
+        tabelle14=ttk.Label(tabelle,text="",font='Arial 10 bold')
         tabelle14.grid(row=2,column=4,sticky='e')
         
         
-        tabelle24=tk.Label(tabelle,text="",font='Arial 10')
+        tabelle24=ttk.Label(tabelle,text="",font='Arial 10')
         tabelle24.grid(row=3,column=4,sticky='e')
         
-        tabelle34=tk.Label(tabelle,text="",font='Arial 10')
+        tabelle34=ttk.Label(tabelle,text="",font='Arial 10')
         tabelle34.grid(row=4,column=4,sticky='e')
         
-        tabelle44=tk.Label(tabelle,text="",font='Arial 10')
+        tabelle44=ttk.Label(tabelle,text="",font='Arial 10')
         tabelle44.grid(row=5,column=4,sticky='e')
         
-        tabelle54=tk.Label(tabelle,text="",font='Arial 10')
+        tabelle54=ttk.Label(tabelle,text="",font='Arial 10')
         tabelle54.grid(row=6,column=4,sticky='e')
         
-        tabelle64=tk.Label(tabelle,text="",font='Arial 10')
+        tabelle64=ttk.Label(tabelle,text="",font='Arial 10')
         tabelle64.grid(row=7,column=4,sticky='e')
         
-        tabelle74=tk.Label(tabelle,text="",font='Arial 10')
+        tabelle74=ttk.Label(tabelle,text="",font='Arial 10')
         tabelle74.grid(row=8,column=4,sticky='e')
         
-        tabelle84=tk.Label(tabelle,text="",font='Arial 10')
+        tabelle84=ttk.Label(tabelle,text="",font='Arial 10')
         tabelle84.grid(row=9,column=4,sticky='e')
         
-        tabelle94=tk.Label(tabelle,text="",font='Arial 10')
+        tabelle94=ttk.Label(tabelle,text="",font='Arial 10')
         tabelle94.grid(row=10,column=4,sticky='e')
         
         #COLUMN 5 Seereise Hängematte
-        tabelle15=tk.Label(tabelle,text="",font='Arial 10 bold')
+        tabelle15=ttk.Label(tabelle,text="",font='Arial 10 bold')
         tabelle15.grid(row=2,column=5,sticky='e')
         
         
-        tabelle25=tk.Label(tabelle,text="",font='Arial 10')
+        tabelle25=ttk.Label(tabelle,text="",font='Arial 10')
         tabelle25.grid(row=3,column=5,sticky='e')
         
-        tabelle35=tk.Label(tabelle,text="",font='Arial 10')
+        tabelle35=ttk.Label(tabelle,text="",font='Arial 10')
         tabelle35.grid(row=4,column=5,sticky='e')
         
-        tabelle45=tk.Label(tabelle,text="",font='Arial 10')
+        tabelle45=ttk.Label(tabelle,text="",font='Arial 10')
         tabelle45.grid(row=5,column=5,sticky='e')
         
-        tabelle55=tk.Label(tabelle,text="",font='Arial 10')
+        tabelle55=ttk.Label(tabelle,text="",font='Arial 10')
         tabelle55.grid(row=6,column=5,sticky='e')
         
-        tabelle65=tk.Label(tabelle,text="",font='Arial 10')
+        tabelle65=ttk.Label(tabelle,text="",font='Arial 10')
         tabelle65.grid(row=7,column=5,sticky='e')
         
-        tabelle75=tk.Label(tabelle,text="",font='Arial 10')
+        tabelle75=ttk.Label(tabelle,text="",font='Arial 10')
         tabelle75.grid(row=8,column=5,sticky='e')
         
-        tabelle85=tk.Label(tabelle,text="",font='Arial 10')
+        tabelle85=ttk.Label(tabelle,text="",font='Arial 10')
         tabelle85.grid(row=9,column=5,sticky='e')
         
-        tabelle95=tk.Label(tabelle,text="",font='Arial 10')
+        tabelle95=ttk.Label(tabelle,text="",font='Arial 10')
         tabelle95.grid(row=10,column=5,sticky='e')
         
         #COLUMN 6 Seereise Kabine
-        tabelle16=tk.Label(tabelle,text="",font='Arial 10 bold')
+        tabelle16=ttk.Label(tabelle,text="",font='Arial 10 bold')
         tabelle16.grid(row=2,column=6,sticky='e')
         
         
-        tabelle26=tk.Label(tabelle,text="",font='Arial 10')
+        tabelle26=ttk.Label(tabelle,text="",font='Arial 10')
         tabelle26.grid(row=3,column=6,sticky='e')
         
-        tabelle36=tk.Label(tabelle,text="",font='Arial 10')
+        tabelle36=ttk.Label(tabelle,text="",font='Arial 10')
         tabelle36.grid(row=4,column=6,sticky='e')
         
-        tabelle46=tk.Label(tabelle,text="",font='Arial 10')
+        tabelle46=ttk.Label(tabelle,text="",font='Arial 10')
         tabelle46.grid(row=5,column=6,sticky='e')
         
-        tabelle56=tk.Label(tabelle,text="",font='Arial 10')
+        tabelle56=ttk.Label(tabelle,text="",font='Arial 10')
         tabelle56.grid(row=6,column=6,sticky='e')
         
-        tabelle66=tk.Label(tabelle,text="",font='Arial 10')
+        tabelle66=ttk.Label(tabelle,text="",font='Arial 10')
         tabelle66.grid(row=7,column=6,sticky='e')
         
-        tabelle76=tk.Label(tabelle,text="",font='Arial 10')
+        tabelle76=ttk.Label(tabelle,text="",font='Arial 10')
         tabelle76.grid(row=8,column=6,sticky='e')
         
-        tabelle86=tk.Label(tabelle,text="",font='Arial 10')
+        tabelle86=ttk.Label(tabelle,text="",font='Arial 10')
         tabelle86.grid(row=9,column=6,sticky='e')
         
-        tabelle96=tk.Label(tabelle,text="",font='Arial 10')
+        tabelle96=ttk.Label(tabelle,text="",font='Arial 10')
         tabelle96.grid(row=10,column=6,sticky='e')
         
         
         
-            
-            
-            
-                # Create a Tkinter variable
-        tkvar = tk.StringVar(listbox)
-         
-        # Dictionary with options
-        choices = { 'Dukaten','Silber','Heller','Kreuzer'}
-        tkvar.set('Kreuzer') # set the default option
-         
-        popupMenu = tk.OptionMenu(listbox, tkvar, *choices)
-        tk.Label(listbox, text="Rundungslevel Bestimmen").grid(row = 1, column = 1)
-        popupMenu.grid(row = 2, column =1)
-         
-        # on change dropdown value
-        def change_dropdown(*args):
-           return tkvar.get() 
-           
+        ttk.Label(listbox,text="Rundung auf volle:",font='Arial 10').grid(sticky='w')
         
-         
-        # link function to change dropdown
-        tkvar.trace('w', change_dropdown)
+            
+        auswahlRundung = ['Dukaten', 'Silber', 'Heller','Kreuzer']
         
-        
+        comboBoxRundung=ttk.Combobox(listbox,values=auswahlRundung,state="readonly")
+        comboBoxRundung.grid()  
+        comboBoxRundung.set('Kreuzer')
+                
 
         #masterframe
                
         
-        #self.caluclationQS=tk.Button(knöpfe,text="QS Stufen Berechnen")
+        #self.caluclationQS=ttk.Button(knöpfe,text="QS Stufen Berechnen")
         #self.caluclationQS.grid(row=20,column=3)
         
-        self.mainMenu = tk.Button(knöpfe, text="Zurück zum Hauptmenü",
+        self.mainMenu = ttk.Button(knöpfe, text="Zurück zum Hauptmenü",
                            command=lambda: master.switch_frame(StartPage),width=50)
         self.mainMenu.grid(row=21,column=1)
         
+        
 
-
-class PageContact(tk.Frame):
+class PageContact(ttk.Frame):
 
     def __init__(self, master):
-        tk.Frame.__init__(self, master)
-        #label = tk.Label(self, text="Fragen, Anregungen, Bugs?\n Per Mail bin ich unter ")
+        ttk.Frame.__init__(self, master)
+        #label = ttk.Label(self, text="Fragen, Anregungen, Bugs?\n Per Mail bin ich unter ")
         #label.pack(side="top", fill="x", pady=10)
         kontakt=tk.Text(self,font='Arial')
         kontakt.pack()
@@ -738,7 +791,7 @@ class PageContact(tk.Frame):
         Du kannst mir aber auch gern eine direkte Mail schrieben.
         Danke für dein Input."""
         kontakt.insert("end",contactInformation)
-        button = tk.Button(self, text="Zurück zum Hauptmenü",
+        button = ttk.Button(self, text="Zurück zum Hauptmenü",
                            command=lambda: master.switch_frame(StartPage))
         button.pack()
 
