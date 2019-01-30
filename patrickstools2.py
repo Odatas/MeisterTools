@@ -17,13 +17,19 @@ except ImportError:
      import tkinter.ttk as ttk
      py3 = True
 from tkinter import messagebox
+
 import random
+
+import sqlite3
 
 
 #print(s.theme_names())
 
     
-    
+#Diese Funktion nimmt einen Int und ein Rundungslevel
+#Der Int wird als Kreuzer intepretiert.
+#Es wird dann ein String zurück gegeben der die umwandlung in Dukaten Silber
+#Heller und Kreuzer unter Berücksichtigung des Rundungslevels beinhaltet
 def Geldrechner(money, level,rundungslevel):
     moneystring=''
     money=int(money)      
@@ -56,7 +62,8 @@ def Geldrechner(money, level,rundungslevel):
         moneystring=moneystring+str(int(round(Kreuzer,0)))+ ' Kreuzer '
     return moneystring
 
-
+# Gleiche Funktion wie Geldrechner. Der String enthält jedoch statt "Dukaten" nur ein D
+# Respektiv auch für die anderen Währungen
 def GeldrechnerKurz(money, level,rundungslevel):
     moneystring=''
     money=int(money)      
@@ -91,7 +98,7 @@ def GeldrechnerKurz(money, level,rundungslevel):
     
 
 
-
+#Main Window wird gestartet.
 class PTools(tk.Tk):
     def __init__(self):
         tk.Tk.__init__(self)
@@ -109,7 +116,8 @@ class PTools(tk.Tk):
         self._frame = new_frame
         self._frame.pack(anchor='center')    
 
-
+#Das Start Fenster was nach dem Starten des Tools gezeigt wird
+#Hier wird auch das Theme für die App gesetzt.
 class StartPage(ttk.Frame):
 
     def __init__(self, master):        
@@ -137,7 +145,7 @@ class StartPage(ttk.Frame):
         self.button2=ttk.Button(alles, text ="Hier kommt noch was (NPC Randomizer)",width=50)
         self.button2.pack()
         
-        self.button3=ttk.Button(alles, text ="Hier auch (Gefahrenübersicht)",width=50)
+        self.button3=ttk.Button(alles, text ="Hier auch (Gefahrenübersicht)",command=lambda: master.switch_frame(PageDangers),width=50)
         self.button3.pack()
         
         self.button4=ttk.Button(alles, text ="Kontakt",command=lambda: master.switch_frame(PageContact),width=50)
@@ -151,17 +159,17 @@ class StartPage(ttk.Frame):
 
         
 
-
+#Das Fenster Reisehilfen
 class PageTravel(ttk.Frame):
-
+    #Die Verschiedenen Frames für die Unterkategorien
     def __init__(self, master):
         ttk.Frame.__init__(self, master)
         
         eingaben=tk.Frame(self)
-        eingaben.grid(row=0,column=0,pady=10,padx=(100,0),sticky='w')
+        eingaben.grid(row=0,column=0,pady=50,padx=(100,0),sticky='w')
         
         anzeigen=tk.Frame(self)
-        anzeigen.grid(row=0,column=1,pady=10,padx=(0,100),sticky='sw')
+        anzeigen.grid(row=0,column=1,pady=50,sticky='nw')
         
         tabelle=tk.Frame(self)
         tabelle.grid(row=1,column=0,pady=10,padx=100,columnspan=2,sticky='w')
@@ -175,9 +183,9 @@ class PageTravel(ttk.Frame):
         knöpfe=tk.Frame(self)
         knöpfe.grid(row=3,column=1,pady=10,padx=100)
         
-        
+        #Die Funktion was passiert wenn man auf "Berrechnen" drückt.
         def ButtonPress(event=None):
-         
+            #Zuerst werden alle Eingaben geprüft und ausgelesen
             try:                
                 #Gruppengröße
                 gruppengröße=int(eingabe1.get())
@@ -233,37 +241,60 @@ class PageTravel(ttk.Frame):
                 self.eingabe7.delete(0,'end')
                 self.eingabe7.insert(0,"0")
                 pferdReise=0
-          
+            #Das Rundungslevel wird bestimmt
             rundung=comboBoxRundung.get()
-            
+            #Die Reiseschwierigkeit wird bestimmt
             wegZustand=comboBoxWege.get()
             
-            if wegZustand=='Perfekt(100%)':
-                chance=1
-            if wegZustand=='Gut(80%)':
-                chance=0.8
-            if wegZustand=='Mittel(60%)':
-                chance=0.6
-            if wegZustand=='Schlecht(40%)':
-                chance=0.4
+            #Je nach Rundungslevel wird der Prozentwert festgelegt
+            simulation=comboBoxSimulation.get()
+            if simulation == 'Simulation':            
+                if wegZustand=='Perfekt':
+                    chance=1
+                if wegZustand=='Gut':
+                    chance=0.68
+                if wegZustand=='Mittel':
+                    chance=0.40
+                if wegZustand=='Schlecht':
+                    chance=0.25
+            else:
+                if wegZustand=='Perfekt':
+                    chance=1
+                if wegZustand=='Gut':
+                    chance=0.90
+                if wegZustand=='Mittel':
+                    chance=0.74
+                if wegZustand=='Schlecht':
+                    chance=0.65
            
+            
             daysToTravel=0
             
             
+            #Festlegen ob Wert berechnet oder Simuliert werden soll
             
-            simulation=1
+            #Transportkosten Berechnen für das Handeln
+            FlusskahnKosten=FlusskahnWeg/100*kostenFlusskahn*gruppengröße
+            ReiseKutscheKosten=reiseKutschenWeg/100*kostenReisekutsche*gruppengröße
+            SeereiseKostenM=seeReiseWegM/100*kostenSeereiseHängematte*gruppengröße
+            SeereiseKostenK=seeReiseWegK/100*kostenSeereiseKabine*gruppengröße
             
+            #Gesamt Transport Kosten werden nach Distanz und Gruppengröße festgelegt
             transportCost=gruppengröße*(FlusskahnWeg*kostenFlusskahn+reiseKutschenWeg*kostenReisekutsche+seeReiseWegM*kostenSeereiseHängematte+seeReiseWegK*kostenSeereiseKabine)/100
-            
-            if simulation==1:
+            #Simulation der Reisedistanz. 
+            if simulation=='Simulation' and wegZustand != 'Perfekt':
+                #Jeder Tag wird einzelnd Simuliert.
+                #So lange noch Reisweg vorhanden ist
                 while pferdReise>0:
+                    #Berechne den Verlangsamungsfaktor
                     daySlow=1/(random.randint(chance*100,100)/100)
+                    #Zähle Reisetag einen hoch
                     daysToTravel=daysToTravel+1
+                    #Die Distanz ist die Normaldistanz-Distanz*Verlangsamungsfaktor
                     pferdReise=pferdReise-(pferdReise*daySlow)
                     
                 while fußWeg>0:
                     daySlow=(random.randint(chance*100,100)/100)
-                    print(daySlow)
                     daysToTravel=daysToTravel+1
                     fußWeg=fußWeg-(speedFuß*daySlow)
                     
@@ -287,32 +318,34 @@ class PageTravel(ttk.Frame):
                     daysToTravel=daysToTravel+1
                     seeReiseWegK=seeReiseWegK-(speedShip*daySlow)
                 
-                
+            #Wenn nicht simuliert wird ist es einfach das Level mal der Reisedauer   
             else:
                 daysToTravel=(pferdReise/speedHorse+fußWeg/speedFuß+FlusskahnWeg/speedFlusskahn+reiseKutschenWeg/speedReiseKutsche+seeReiseWegM/speedShip+seeReiseWegK/speedShip)*(1/chance)
                 
             
             
+            #Darstellung von Tagen und Transporkosten
+            self.travelDays.config(text=str(int(daysToTravel))+ " Tage") 
             
-            self.travelDays.config(text=str(int(daysToTravel))+ " Tage")            
             self.transportKosten.config(text=Geldrechner(transportCost,'Silber',rundung))
             
             
             food=0
             water=0
-            travelersCount=int(gruppengröße)
-            if simulation==1:
+            #travelersCount=int(gruppengröße)
+            if simulation=='Simulation' and wegZustand != 'Perfekt':
                 for x in range(int(daysToTravel)):
-                    dayHard=1/(random.randint(chance*100,100)/100)
+                    dayHard=1/((random.randint(chance*100,100)/100))
                     
                         
-                    foodNeed=foodPerDay*travelersCount*dayHard
-                    waterNeed=waterPerDay*travelersCount*dayHard
+                    foodNeed=foodPerDay*gruppengröße*dayHard
+                    waterNeed=waterPerDay*gruppengröße*dayHard
                     food=food+foodNeed
                     water=water+waterNeed
             else:
-                foodNeed=foodPerDay*travelersCount*daysToTravel*(1/chance)
-                waterNeed=waterPerDay*travelersCount*daysToTravel*(1/chance)
+                food=foodPerDay*gruppengröße*daysToTravel*(1/(chance))
+                water=waterPerDay*gruppengröße*daysToTravel*(1/(chance))
+                
                
                 
             
@@ -360,11 +393,11 @@ class PageTravel(ttk.Frame):
                 tabelle82.config(text="")
                 tabelle92.config(text="")
                 
-            FlusskahnKosten=FlusskahnWeg/100*kostenFlusskahn*gruppengröße
+            
                 
             if FlusskahnKosten>0:
                 
-                tabelle13.config(text="Flusskahn fahrt")
+                tabelle13.config(text="Flusskahn")
                 tabelle23.config(text=GeldrechnerKurz(FlusskahnKosten*1.3,'Silber',rundung))
                 tabelle33.config(text=GeldrechnerKurz(FlusskahnKosten,'Silber',rundung))
                 tabelle43.config(text=GeldrechnerKurz(FlusskahnKosten*0.95,'Silber',rundung))
@@ -384,10 +417,10 @@ class PageTravel(ttk.Frame):
                 tabelle83.config(text="")
                 tabelle93.config(text="")
             
-            ReiseKutscheKosten=reiseKutschenWeg/100*kostenReisekutsche*gruppengröße
+            
             if ReiseKutscheKosten>0:
                 
-                tabelle14.config(text="Reisekutschen fahrt")
+                tabelle14.config(text="Reisekutschen")
                 tabelle24.config(text=GeldrechnerKurz(ReiseKutscheKosten*1.3,'Silber',rundung))
                 tabelle34.config(text=GeldrechnerKurz(ReiseKutscheKosten,'Silber',rundung))
                 tabelle44.config(text=GeldrechnerKurz(ReiseKutscheKosten*0.95,'Silber',rundung))
@@ -407,7 +440,7 @@ class PageTravel(ttk.Frame):
                 tabelle84.config(text="")
                 tabelle94.config(text="")
             
-            SeereiseKostenM=seeReiseWegM/100*kostenSeereiseHängematte*gruppengröße
+            
             if SeereiseKostenM>0:
                 
                 tabelle15.config(text="Seereise Hängematte")
@@ -430,7 +463,7 @@ class PageTravel(ttk.Frame):
                 tabelle85.config(text="")
                 tabelle95.config(text="")
                 
-            SeereiseKostenK=seeReiseWegK/100*kostenSeereiseKabine*gruppengröße
+            
             if SeereiseKostenK>0:
                 
                 tabelle16.config(text="Seereise Kabine")
@@ -473,23 +506,15 @@ class PageTravel(ttk.Frame):
         kostenSeereiseHängematte=800
         kostenSeereiseKabine=15000     
             
-        speedHorse=50
-        
-        
-       
-        
-
-
-      
-        
+        speedHorse=50       
         
         
         #eingaben
         numberLabel1=ttk.Label(eingaben,text="Gruppengröße",font='Arial 14')
-        numberLabel1.grid(row=1,column=1,sticky='w')         
+        numberLabel1.grid(row=1,column=1,sticky='w',pady=10)         
         eingabe1=ttk.Entry(eingaben)
         eingabe1.insert(0,"1")
-        eingabe1.grid(row=1,column=2,sticky='w')
+        eingabe1.grid(row=1,column=2,sticky='w',pady=10)
         
         self.distanz=ttk.Label(eingaben,text="Distanzen in ganzen Meilen:",font='Arial 12 bold')
         self.distanz.grid(row=2,column=1,sticky='w')
@@ -497,40 +522,41 @@ class PageTravel(ttk.Frame):
         self.numberLabel2=ttk.Label(eingaben,text="Zu Fuß",font='Arial 10')
         self.numberLabel2.grid(row=3,column=1,sticky='w')
         self.eingabe2=ttk.Entry(eingaben)
-        self.eingabe2.insert(0,"0")
+        #Testwert
+        self.eingabe2.insert(0,"1000")
         self.eingabe2.grid(row=3,column=2,sticky='w')
          
         self.numberLabel3=ttk.Label(eingaben,text="Flusskahn",font='Arial 10')
         self.numberLabel3.grid(row=4,column=1,sticky='w')
         self.eingabe3=ttk.Entry(eingaben)
-        self.eingabe3.insert(3,"0")
+        self.eingabe3.insert(3,"1000")
         self.eingabe3.grid(row=4,column=2,sticky='w')
          
         self.numberLabel4=ttk.Label(eingaben,text="Reisekutsche",font='Arial 10')
         self.numberLabel4.grid(row=5,column=1,sticky='w')
         self.eingabe4=ttk.Entry(eingaben)
-        self.eingabe4.insert(0,"0")
+        self.eingabe4.insert(0,"1000")
         self.eingabe4.grid(row=5,column=2,sticky='w')
          
         self.numberLabel5=ttk.Label(eingaben,text="Seereise, Hängematte",font='Arial 10')
         self.numberLabel5.grid(row=6,column=1,sticky='w')   
         self.eingabe5=ttk.Entry(eingaben)
-        self.eingabe5.insert(0,"0")
+        self.eingabe5.insert(0,"1000")
         self.eingabe5.grid(row=6,column=2,sticky='w')
         
         self.numberLabel6=ttk.Label(eingaben,text="Seereise, Kabine",font='Arial 10')
         self.numberLabel6.grid(row=7,column=1,sticky='w')   
         self.eingabe6=ttk.Entry(eingaben)
-        self.eingabe6.insert(0,"0")
+        self.eingabe6.insert(0,"1000")
         self.eingabe6.grid(row=7,column=2,sticky='w')
         
         self.numberLabel7=ttk.Label(eingaben,text="Pferd Reitend",font='Arial 10')
         self.numberLabel7.grid(row=8,column=1,sticky='w')   
         self.eingabe7=ttk.Entry(eingaben)
-        self.eingabe7.insert(0,"0")
+        self.eingabe7.insert(0,"1000")
         self.eingabe7.grid(row=8,column=2,sticky='w')
         
-        auswahlWege = ['Perfekt(100%)', 'Gut(80%)', 'Mittel(60%)','Schlecht(40%)']
+        auswahlWege = ['Perfekt', 'Gut', 'Mittel','Schlecht']
         
         ttk.Label(eingaben,text="").grid(row=9,columns=2)
 
@@ -539,7 +565,13 @@ class PageTravel(ttk.Frame):
         ttk.Label(eingaben,text="Geschwindigkeit durch\nWegbeschaffenheit \nund Umwelteinflüsse").grid(row=10,column=1,sticky='w')
         comboBoxWege=ttk.Combobox(eingaben,values=auswahlWege,state="readonly")
         comboBoxWege.grid(row=10,column=2)  
-        comboBoxWege.set('Gut(80%)')
+        comboBoxWege.set('Gut')
+        
+        ttk.Label(eingaben,text="Berechnungsmethode Proviant").grid(row=11,column=1,sticky='w')
+        simulationAuswahl=['Simulation','Einfach']
+        comboBoxSimulation=ttk.Combobox(eingaben,values=simulationAuswahl,state="readonly")
+        comboBoxSimulation.grid(row=11,column=2)
+        comboBoxSimulation.set('Simulation')
         
         #berechnungsbutton
         self.calculation=ttk.Button(berechnungsbutton,text="Berechnen",command=ButtonPress,width=50)
@@ -570,9 +602,7 @@ class PageTravel(ttk.Frame):
         
         
         
-        #tabelle
-        
-        
+        #TABELLE        
         #COLUMN 1 Beschriftung
         tabelle01=ttk.Label(tabelle,text="",font='Arial 14 bold')
         tabelle01.grid(row=1,column=1,pady=(0,20),sticky='w')
@@ -774,7 +804,57 @@ class PageTravel(ttk.Frame):
                            command=lambda: master.switch_frame(StartPage),width=50)
         self.mainMenu.grid(row=21,column=1)
         
+class PageDangers(ttk.Frame):
+    def __init__(self, master):
+        ttk.Frame.__init__(self, master)  
         
+        
+        hauptFrame=ttk.Frame(self)
+        hauptFrame.pack()
+        
+        alles=ttk.Frame(self)
+        alles.pack()
+        
+        endButton=ttk.Frame(self)
+        endButton.pack()
+        
+        
+        auswahlRegionen = ['Mittelreich' ,'Orkland' ,'Thorwal' ,'Nostria' , 'Andergast' , 'Horasreich' , 'Zyklopeninseln' ,'Alanfa' ,'Dschungel des Südens'	,'Südmeer'	,'Kalifat', 'Länder der Tulamiden'	,'Aranien'	,'Maraskan'	,'Schattenlande'	,'Salamandersteine'	,'Svelltal'	,'Bornland'	,'Hoher Norden'	,'Mhanadistan'	,'Wüste Khom']
+        comboBoxRegionen=ttk.Combobox(hauptFrame,values=auswahlRegionen,state="readonly")
+        comboBoxRegionen.grid()  
+        comboBoxRegionen.set('Mittelreich')
+        
+        
+        def ButtonShow(event=None):
+           
+                
+                
+            
+            for widget in alles.winfo_children():
+                widget.destroy()
+            Region=comboBoxRegionen.get()
+            
+            searchString= 'SELECT Name, Quelle FROM animals WHERE['  +Region+ ']=1 ORDER BY Name'
+            
+            conn = sqlite3.connect('odatastools.db')
+            c = conn.cursor()
+            c.execute(searchString)
+            i=2
+            
+            ttk.Label(alles,text='Name',font='Arial 10 bold').grid(row=1,column=2,sticky='w')
+            ttk.Label(alles,text='Quelle',font='Arial 10 bold').grid(row=1,column=3,sticky='w')
+            for row in c:    
+               
+                ttk.Label(alles,text=row[0],font='Arial 10').grid(row=i,column=2,sticky='w')
+                ttk.Label(alles,text=row[1],font='Arial 10').grid(row=i,column=3,sticky='w')
+                i=i+1
+        
+        showButton = ttk.Button(hauptFrame, text="Anzeigen",command=ButtonShow,width=50)
+        showButton.grid()
+        
+        mainMenu = ttk.Button(endButton, text="Zurück zum Hauptmenü",
+                           command=lambda: master.switch_frame(StartPage),width=50)
+        mainMenu.grid()
 
 class PageContact(ttk.Frame):
 
@@ -788,7 +868,7 @@ class PageContact(ttk.Frame):
         Lieber User: Vielen Dank für dein Testen.
         Feedback, Wünsche und Bugs nehem ich gerne entgegen.
         Auf Reddit bin ich als User Odatas bekannt.
-        Du kannst mir aber auch gern eine direkte Mail schrieben.
+        Du kannst mir aber auch gern eine direkte Mail an odatas@posteo.eu schreiben.
         Danke für dein Input."""
         kontakt.insert("end",contactInformation)
         button = ttk.Button(self, text="Zurück zum Hauptmenü",

@@ -38,19 +38,19 @@ try:
        Horasreich INTEGER,
        Zyklopeninseln	INTEGER,
        Alanfa	INTEGER,
-       Dschungel des Südens	INTEGER,
+       'Dschungel des Südens'	INTEGER,
        Südmeer	INTEGER,
        Kalifat	INTEGER,
-       Länder der Tulamiden	INTEGER,
+       'Länder der Tulamiden'	INTEGER,
        Aranien	INTEGER,
        Maraskan	INTEGER,
        Schattenlande	INTEGER,
        Salamandersteine	INTEGER,
        Svelltal	INTEGER,
        Bornland	INTEGER,
-       Hohe Norden	INTEGER,
+       'Hoher Norden'	INTEGER,
        Mhanadistan	INTEGER,
-       Wüste Khom	INTEGER,
+       'Wüste Khom'	INTEGER,
        Quelle TEXT
     )''')
     for row in exceldata:
