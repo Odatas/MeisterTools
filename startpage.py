@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 """
-Created on Thu Jan 18 10:27:25 2019
+Created on Thu Jan 31 11:54:19 2019
 
-@author: Odatas
+@author: NG7a8f3
 """
 
 try:
@@ -17,33 +17,10 @@ except ImportError:
      import tkinter.ttk as ttk
      py3 = True
 
-
-# page classes import   
-import travel 
-import contact
-import dangers 
-
-
-
-#Main Window wird gestartet.
-class PTools(tk.Tk):
-    def __init__(self):
-        tk.Tk.__init__(self)
-        #self.geometry("%dx%d"%(self.winfo_screenwidth()-200,self.winfo_screenheight()-200))
-        self._frame = None        
-        self.title("Odatas Meister Tools")
-        self.switch_frame(StartPage)
-
-    def switch_frame(self, frame_class):
-        """Destroys current frame and replaces it with a new one."""
-        new_frame = frame_class(self)
-        if self._frame is not None:
-            self._frame.destroy()
-        self._frame = new_frame
-        self._frame.pack(anchor='center')    
-
-#Das Start Fenster was nach dem Starten des Tools gezeigt wird
-
+from travel import PageTravel
+from contact import PageContact
+from dangers import PageDangers
+     
 class StartPage(ttk.Frame):
 
     def __init__(self, master):        
@@ -67,17 +44,17 @@ class StartPage(ttk.Frame):
         self.Hilfe=ttk.Label(alles,text="Diese Alpha Version ist noch ziemlich kacke. Mal schauen ob es besser wird.\n Feedback an Odatas auf Reddit")
         self.Hilfe.pack(pady=20)
         
-        self.button1 =ttk.Button(alles, text ="Reisehelfer",command=lambda: master.switch_frame(travel.PageTravel),width=50) #command linked
+        self.button1 =ttk.Button(alles, text ="Reisehelfer",command=lambda: master.switch_frame(PageTravel),width=50) #command linked
         self.button1.pack()
                 
         
-        self.button2=ttk.Button(alles, text ="Monster und Wildtiere",command=lambda: master.switch_frame(dangers.PageDangers),width=50)
+        self.button2=ttk.Button(alles, text ="Monster und Wildtiere",command=lambda: master.switch_frame(PageDangers),width=50)
         self.button2.pack()
         
         self.button3=ttk.Button(alles, text ="Verschiedenes",width=50)
         self.button3.pack()
         
-        self.button4=ttk.Button(alles, text ="Kontakt",command=lambda: master.switch_frame(contact.PageContact),width=50)
+        self.button4=ttk.Button(alles, text ="Kontakt",command=lambda: master.switch_frame(PageContact),width=50)
         self.button4.pack()
         
        
@@ -85,10 +62,3 @@ class StartPage(ttk.Frame):
         
         self.version=ttk.Label(version,text="Version Alpha 0.21")
         self.version.pack(anchor='se')
-
-        
-
-if __name__ == "__main__":
-    app = PTools()
-    app.mainloop()
-        
