@@ -22,6 +22,7 @@ except ImportError:
 import travel 
 import contact
 import dangers 
+import sonstiges
 
 
 
@@ -74,7 +75,7 @@ class StartPage(ttk.Frame):
         self.button2=ttk.Button(alles, text ="Monster und Wildtiere",command=lambda: master.switch_frame(dangers.PageDangers),width=50)
         self.button2.pack()
         
-        self.button3=ttk.Button(alles, text ="Verschiedenes",width=50)
+        self.button3=ttk.Button(alles, text ="Verschiedenes",command=lambda: master.switch_frame(sonstiges.StuffPage),width=50)
         self.button3.pack()
         
         self.button4=ttk.Button(alles, text ="Kontakt",command=lambda: master.switch_frame(contact.PageContact),width=50)
