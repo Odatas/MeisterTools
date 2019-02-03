@@ -29,6 +29,7 @@ import patrickstools2
 class PageTravel(ttk.Frame):
     #Die Verschiedenen Frames für die Unterkategorien
     def __init__(self, master):
+        master.title("Reise")
         ttk.Frame.__init__(self, master)
         
         eingaben=tk.Frame(self)
@@ -370,7 +371,7 @@ class PageTravel(ttk.Frame):
         
         speedShip=100
         kostenSeereiseHängematte=800
-        kostenSeereiseKabine=15000     
+        kostenSeereiseKabine=1500     
             
         speedHorse=50       
         

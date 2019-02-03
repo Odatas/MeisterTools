@@ -25,6 +25,7 @@ import patrickstools2
 class PageDangers(ttk.Frame):
     def __init__(self, master):
         ttk.Frame.__init__(self, master)  
+        master.title("Gefahren der Regionen")
         
         conn = sqlite3.connect('odatastools.db')
         
