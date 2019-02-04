@@ -354,7 +354,7 @@ class PageTravel(ttk.Frame):
                 tabelle96.config(text="")
             
         
-        #Gewicht in Steine
+        #Proviantkosten pro Tag in Kreuzer
         foodPerDay=50
         waterPerDay=3
         
