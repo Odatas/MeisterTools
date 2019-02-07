@@ -75,7 +75,7 @@ class StartPage(ttk.Frame):
         self.button2=ttk.Button(alles, text ="Monster und Wildtiere",command=lambda: master.switch_frame(dangers.PageDangers),width=50)
         self.button2.pack()
         
-        self.button5=ttk.Button(alles, text ="NPC Generator(Kommt irgendwann)",command=lambda:master.switch_frame(randomenpc.PageRandomeNPC),width=50)
+        self.button5=ttk.Button(alles, text ="NPC Generator",command=lambda:master.switch_frame(randomenpc.PageRandomeNPC),width=50)
         self.button5.pack()
         
         self.button3=ttk.Button(alles, text ="Verschiedenes",command=lambda: master.switch_frame(sonstiges.StuffPage),width=50)
