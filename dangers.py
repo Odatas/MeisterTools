@@ -21,13 +21,27 @@ except ImportError:
 import sqlite3
 
 import patrickstools2
+from tkinter import messagebox
+
+
+from urllib.request import pathname2url
+
+
 
 class PageDangers(ttk.Frame):
     def __init__(self, master):
         ttk.Frame.__init__(self, master)  
         master.title("Gefahren der Regionen")
         
-        conn = sqlite3.connect('odatastools.db')
+        
+        try:
+            dburi = 'file:{}?mode=rw'.format(pathname2url('odatastools.db'))
+            conn = sqlite3.connect(dburi, uri=True)
+        except sqlite3.OperationalError:
+            messagebox.showerror("ERROR","Die Datenbank konnte nicht gefunden werden. Stelle sicher dass sich die Datei odatastools im gleichen Ordner wie Das Hauptprogramm befindet.")
+        
+        
+        #conn = sqlite3.connect('odatastools.db')
         
         hauptFrame=ttk.Frame(self)
         hauptFrame.pack(padx=500)
