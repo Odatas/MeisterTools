@@ -1,5 +1,12 @@
 # MeisterTools
 
+Alhpa 0.21
+
+- Ein neues Menu ist nun da "Verschiedenes" beinhaltet all die kleinen Dingen für die ein eingenes Fenser keinen Sinn macht. Momentan ist da nicht viel drin aber vielleicht wird das ja noch.
+- EIn paar Bugfixes wurden gemacht. Glaub ich
+- Das Kontakt Menu wurde überarbeitet. Das heißt nicht das es besser ist nur anders. Mit 100% mehr Discord und email links.
+- Im Reisefenster muss man jetzt nicht immer auf Berechnen klicken wenn man einen neuen Simulationsmodus ausgewählt hat. Das passiert sofort. 
+
 Alpha 0.20
 
 - Gefahrenübersicht
