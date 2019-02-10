@@ -80,7 +80,7 @@ class StuffPage(ttk.Frame):
                 reiter=int(reiterEntry.get())
              except:
                 reiter=0
-                messagebox.showerror("ZPostkutsche","Falsche eingabe. Nur ganze Zahlen erlaubt. Wert wird auf 0 gesetz.")
+                messagebox.showerror("Postkutsche","Falsche eingabe. Nur ganze Zahlen erlaubt. Wert wird auf 0 gesetz.")
                 reiterEntry.delete(0,'end')
                 reiterEntry.insert(0,"0")
              #Obacht bei der Berechnung. Hier wird Meilen in Kreuzer Gerechnet. 
@@ -101,14 +101,15 @@ class StuffPage(ttk.Frame):
          
          reiterEntry=ttk.Entry(post)
          reiterEntry.grid(row=2,column=2)
-         reiterEntry     
+         reiterEntry.insert(0,"0")
        
          
          postCostLabel=ttk.Label(post,text='0 Dukaten 0 Silber 0 Heller 0 Kreuzer',font='Arial 10 bold')
-         postCostLabel.grid(row=3,column=1,columnspan=2)
+         postCostLabel.grid(row=4,column=1,columnspan=2)
+         
          
          postBerechnung=ttk.Button(post,text="Berechnen",command=postButton,width=50)
-         postBerechnung.grid(row=4,column=1,columnspan=2)
+         postBerechnung.grid(row=5,column=1,columnspan=2)
          
          
          
