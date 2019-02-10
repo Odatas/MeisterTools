@@ -19,11 +19,8 @@ from tkinter import messagebox
 
 import random
 
-
-
 from . import odatasfunctions as of
 from . import patrickstools2
-
 
 #Das Fenster Reisehilfen
 class PageTravel(ttk.Frame):
@@ -100,7 +97,7 @@ class PageTravel(ttk.Frame):
                 self.eingabe6.delete(0,'end')
                 self.eingabe6.insert(0,"0")
                 seeReiseWegK=0
-                
+
             try:
                 pferdReise=int(self.eingabe7.get())
             except:
@@ -115,115 +112,28 @@ class PageTravel(ttk.Frame):
             
             #Je nach Rundungslevel wird der Prozentwert festgelegt
             simulation=comboBoxSimulation.get()
-            if simulation == 'Simulation':            
-                if wegZustand=='Perfekt':
-                    chance=1
-                if wegZustand=='Gut':
-                    chance=0.68
-                if wegZustand=='Mittel':
-                    chance=0.40
-                if wegZustand=='Schlecht':
-                    chance=0.25
-            else:
-                if wegZustand=='Perfekt':
-                    chance=1
-                if wegZustand=='Gut':
-                    chance=0.90
-                if wegZustand=='Mittel':
-                    chance=0.74
-                if wegZustand=='Schlecht':
-                    chance=0.65
-           
+            simulation = simulation == "Simulation"
             
-            daysToTravel=0
+            reisewege = (pferdReise, fußWeg, FlusskahnWeg, reiseKutschenWeg,
+                         seeReiseWegM, seeReiseWegK)
             
-            
-            #Festlegen ob Wert berechnet oder Simuliert werden soll
-            
-            #Transportkosten Berechnen für das Handeln
-            FlusskahnKosten=FlusskahnWeg/100*kostenFlusskahn*gruppengröße
-            ReiseKutscheKosten=reiseKutschenWeg/100*kostenReisekutsche*gruppengröße
-            SeereiseKostenM=seeReiseWegM/100*kostenSeereiseHängematte*gruppengröße
-            SeereiseKostenK=seeReiseWegK/100*kostenSeereiseKabine*gruppengröße
-            
-            #Gesamt Transport Kosten werden nach Distanz und Gruppengröße festgelegt
-            transportCost=gruppengröße*(FlusskahnWeg*kostenFlusskahn+reiseKutschenWeg*kostenReisekutsche+seeReiseWegM*kostenSeereiseHängematte+seeReiseWegK*kostenSeereiseKabine)/100
-            #Simulation der Reisedistanz. 
-            if simulation=='Simulation' and wegZustand != 'Perfekt':
-                #Jeder Tag wird einzelnd Simuliert.
-                #So lange noch Reisweg vorhanden ist
-                while pferdReise>0:
-                    #Berechne den Verlangsamungsfaktor
-                    daySlow=1/(random.randint(chance*100,100)/100)
-                    #Zähle Reisetag einen hoch
-                    daysToTravel=daysToTravel+1
-                    #Die Distanz ist die Normaldistanz-Distanz*Verlangsamungsfaktor
-                    pferdReise=pferdReise-(pferdReise*daySlow)
-                    
-                while fußWeg>0:
-                    daySlow=(random.randint(chance*100,100)/100)
-                    daysToTravel=daysToTravel+1
-                    fußWeg=fußWeg-(speedFuß*daySlow)
-                    
-                while FlusskahnWeg>0:
-                    daySlow=(random.randint(chance*100,100)/100)
-                    daysToTravel=daysToTravel+1
-                    FlusskahnWeg=FlusskahnWeg-(speedFlusskahn*daySlow)
-                    
-                while reiseKutschenWeg>0:
-                    daySlow=(random.randint(chance*100,100)/100)
-                    daysToTravel=daysToTravel+1
-                    reiseKutschenWeg=reiseKutschenWeg-(speedReiseKutsche*daySlow)
-                    
-                while seeReiseWegM>0:
-                    daySlow=(random.randint(chance*100,100)/100)
-                    daysToTravel=daysToTravel+1
-                    seeReiseWegM=seeReiseWegM-(speedShip*daySlow)
-                    
-                while seeReiseWegK>0:
-                    daySlow=(random.randint(chance*100,100)/100)
-                    daysToTravel=daysToTravel+1
-                    seeReiseWegK=seeReiseWegK-(speedShip*daySlow)
-                
-            #Wenn nicht simuliert wird ist es einfach das Level mal der Reisedauer   
-            else:
-                daysToTravel=(pferdReise/speedHorse+fußWeg/speedFuß+FlusskahnWeg/speedFlusskahn+reiseKutschenWeg/speedReiseKutsche+seeReiseWegM/speedShip+seeReiseWegK/speedShip)*(1/chance)
-                
-            
-            
+            daysToTravel, transportCost, transportMittelKosten = of.reisedauerrechnung(reisewege,
+                                                                                       rundung,
+                                                                                       gruppengröße,
+                                                                                       wegZustand,
+                                                                                       simulation)
+            food, water = of.berechne_nahrungsbedarf(daysToTravel, gruppengröße,
+                                                     wegZustand, simulation)
+            FlusskahnKosten, ReiseKutscheKosten, SeereiseKostenM, SeereiseKostenK = transportMittelKosten
+
             #Darstellung von Tagen und Transporkosten
             self.travelDays.config(text=str(int(daysToTravel))+ " Tage") 
-            
             self.transportKosten.config(text=of.Geldrechner(transportCost,'Silber',rundung))
-            
-            
-            food=0
-            water=0
-            #travelersCount=int(gruppengröße)
-            if simulation=='Simulation' and wegZustand != 'Perfekt':
-                for x in range(int(daysToTravel)):
-                    dayHard=1/((random.randint(chance*100,100)/100))
-                    
-                        
-                    foodNeed=foodPerDay*gruppengröße*dayHard
-                    waterNeed=waterPerDay*gruppengröße*dayHard
-                    food=food+foodNeed
-                    water=water+waterNeed
-            else:
-                food=foodPerDay*gruppengröße*daysToTravel*(1/(chance))
-                water=waterPerDay*gruppengröße*daysToTravel*(1/(chance))
-                
-               
-                
             
             costs=of.Geldrechner(food,'Silber',rundung)
             self.foodCost.config(text=costs)   
             travelcostAll=of.Geldrechner(food+transportCost,'Silber',rundung)
             self.travelAll.config(text= travelcostAll)
-            
-            
-            
-       
             
             tabelle01.config(text="Fertigkeitsprobe: Handeln")
             #tabelle02.config(text="Für wenn die Spieler auf Handeln würfeln wollen")
@@ -235,11 +145,9 @@ class PageTravel(ttk.Frame):
             tabelle61.config(text="QS 4: FP 10-12")
             tabelle71.config(text="QS 5: FP 13-15")
             tabelle81.config(text="QS 6: FP 16+")
-
             
             #Tabelle Füllen
             if food>0:
-                
                 tabelle12.config(text="Proviant")
                 tabelle22.config(text=of.GeldrechnerKurz(food*1.3,'Silber',rundung))
                 tabelle32.config(text=of.GeldrechnerKurz(food*1,'Silber',rundung))
@@ -260,10 +168,7 @@ class PageTravel(ttk.Frame):
                 tabelle82.config(text="")
                 tabelle92.config(text="")
                 
-            
-                
             if FlusskahnKosten>0:
-                
                 tabelle13.config(text="Flusskahn")
                 tabelle23.config(text=of.GeldrechnerKurz(FlusskahnKosten*1.3,'Silber',rundung))
                 tabelle33.config(text=of.GeldrechnerKurz(FlusskahnKosten,'Silber',rundung))
@@ -284,9 +189,7 @@ class PageTravel(ttk.Frame):
                 tabelle83.config(text="")
                 tabelle93.config(text="")
             
-            
             if ReiseKutscheKosten>0:
-                
                 tabelle14.config(text="Reisekutschen")
                 tabelle24.config(text=of.GeldrechnerKurz(ReiseKutscheKosten*1.3,'Silber',rundung))
                 tabelle34.config(text=of.GeldrechnerKurz(ReiseKutscheKosten,'Silber',rundung))
@@ -307,9 +210,7 @@ class PageTravel(ttk.Frame):
                 tabelle84.config(text="")
                 tabelle94.config(text="")
             
-            
             if SeereiseKostenM>0:
-                
                 tabelle15.config(text="Seereise Hängematte")
                 tabelle25.config(text=of.GeldrechnerKurz(SeereiseKostenM*1.3,'Silber',rundung))
                 tabelle35.config(text=of.GeldrechnerKurz(SeereiseKostenM,'Silber',rundung))
@@ -329,10 +230,8 @@ class PageTravel(ttk.Frame):
                 tabelle75.config(text="")
                 tabelle85.config(text="")
                 tabelle95.config(text="")
-                
             
             if SeereiseKostenK>0:
-                
                 tabelle16.config(text="Seereise Kabine")
                 tabelle26.config(text=of.GeldrechnerKurz(SeereiseKostenK*1.3,'Silber',rundung))
                 tabelle36.config(text=of.GeldrechnerKurz(SeereiseKostenK,'Silber',rundung))
@@ -352,29 +251,6 @@ class PageTravel(ttk.Frame):
                 tabelle76.config(text="")
                 tabelle86.config(text="")
                 tabelle96.config(text="")
-            
-        
-        #Proviantkosten pro Tag in Kreuzer
-        foodPerDay=50
-        waterPerDay=3
-        
-        #Geschwindigkeit in Meilen pro Tag
-        speedFuß=30
-        
-        speedFlusskahn=50
-        
-        #Kosten in Kreuzer
-        kostenFlusskahn=25/2
-        
-        speedReiseKutsche=40
-        kostenReisekutsche=1200
-        
-        speedShip=100
-        kostenSeereiseHängematte=800
-        kostenSeereiseKabine=1500     
-            
-        speedHorse=50       
-        
         
         #eingaben
         numberLabel1=ttk.Label(eingaben,text="Gruppengröße",font='Arial 14')
@@ -426,8 +302,6 @@ class PageTravel(ttk.Frame):
         auswahlWege = ['Perfekt', 'Gut', 'Mittel','Schlecht']
         
         ttk.Label(eingaben,text="").grid(row=9,columns=2)
-
-        
         
         ttk.Label(eingaben,text="Geschwindigkeit durch\nWegbeschaffenheit \nund Umwelteinflüsse").grid(row=10,column=1,sticky='w')
         comboBoxWege=ttk.Combobox(eingaben,values=auswahlWege,state="readonly")
@@ -444,7 +318,6 @@ class PageTravel(ttk.Frame):
         self.calculation=ttk.Button(berechnungsbutton,text="Berechnen",command=ButtonPress,width=50)
         self.calculation.grid(row=20,column=1,pady=10,sticky='w') 
         
-        
         #anzeigen
         self.travelDayslabel=ttk.Label(anzeigen,text="Reisedauer:",font='Arial 10 bold')
         self.travelDayslabel.grid(row=1,column=1,sticky='w')
@@ -455,7 +328,6 @@ class PageTravel(ttk.Frame):
         self.foodCostlabel.grid(row=2,column=1,sticky='w')
         self.foodCost=ttk.Label(anzeigen,text="0 Dukaten 0 Silber 0 Heller 0 Kreuzer",font='Arial 10 bold')
         self.foodCost.grid(row=2,column=2,sticky='w')
-
         
         self.transportKostenlabel=ttk.Label(anzeigen,text="Kosten für Transport:",font='Arial 10 bold')
         self.transportKostenlabel.grid(row=3,column=1,sticky='w')
@@ -466,8 +338,6 @@ class PageTravel(ttk.Frame):
         self.travelAlllabel.grid(row=4,column=1,sticky='w')
         self.travelAll=ttk.Label(anzeigen,text="0 Dukaten 0 Silber 0 Heller 0 Kreuzer",font='Arial 10 bold')
         self.travelAll.grid(row=4,column=2,sticky='w')
-        
-        
         
         #TABELLE        
         #COLUMN 1 Beschriftung
@@ -500,14 +370,10 @@ class PageTravel(ttk.Frame):
         
         tabelle81=ttk.Label(tabelle,text="",font='Arial 10 bold')
         tabelle81.grid(row=10,column=1,sticky='w')
-        
-        
-        
             
         #COLUMN 2 Proviant
         tabelle12=ttk.Label(tabelle,text="",font='Arial 10 bold')
         tabelle12.grid(row=2,column=2,sticky='e')
-        
         
         tabelle22=ttk.Label(tabelle,text="",font='Arial 10')
         tabelle22.grid(row=3,column=2,sticky='e')
@@ -537,7 +403,6 @@ class PageTravel(ttk.Frame):
         tabelle13=ttk.Label(tabelle,text="",font='Arial 10 bold')
         tabelle13.grid(row=2,column=3,sticky='e')
         
-        
         tabelle23=ttk.Label(tabelle,text="",font='Arial 10')
         tabelle23.grid(row=3,column=3,sticky='e')
         
@@ -565,7 +430,6 @@ class PageTravel(ttk.Frame):
          #COLUMN 4 Reisekutsche
         tabelle14=ttk.Label(tabelle,text="",font='Arial 10 bold')
         tabelle14.grid(row=2,column=4,sticky='e')
-        
         
         tabelle24=ttk.Label(tabelle,text="",font='Arial 10')
         tabelle24.grid(row=3,column=4,sticky='e')
@@ -624,7 +488,6 @@ class PageTravel(ttk.Frame):
         tabelle16=ttk.Label(tabelle,text="",font='Arial 10 bold')
         tabelle16.grid(row=2,column=6,sticky='e')
         
-        
         tabelle26=ttk.Label(tabelle,text="",font='Arial 10')
         tabelle26.grid(row=3,column=6,sticky='e')
         
@@ -649,20 +512,15 @@ class PageTravel(ttk.Frame):
         tabelle96=ttk.Label(tabelle,text="",font='Arial 10')
         tabelle96.grid(row=10,column=6,sticky='e')
         
-        
-        
         ttk.Label(listbox,text="Rundung auf volle:",font='Arial 10').grid(sticky='w')
-        
             
         auswahlRundung = ['Dukaten', 'Silber', 'Heller','Kreuzer']
         
         comboBoxRundung=ttk.Combobox(listbox,values=auswahlRundung,state="readonly")
         comboBoxRundung.grid()  
         comboBoxRundung.set('Kreuzer')
-                
 
         #masterframe
-               
         comboBoxRundung.bind("<<ComboboxSelected>>", ButtonPress)
         comboBoxSimulation.bind("<<ComboboxSelected>>", ButtonPress)
         comboBoxWege.bind("<<ComboboxSelected>>", ButtonPress)
