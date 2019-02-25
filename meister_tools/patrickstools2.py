@@ -31,9 +31,10 @@ from . import randomenpc
 class PTools(tk.Tk):
     def __init__(self):
         tk.Tk.__init__(self)
-        #self.geometry("%dx%d"%(self.winfo_screenwidth()-200,self.winfo_screenheight()-200))
+        #self.geometry("%dx%d"%(self.winfo_screenwidth()+200,self.winfo_screenheight()+200))
         self._frame = None        
-        self.title("Odatas Meister Tools")
+        self.title("Odatas Meister Tools") 
+        
         self.switch_frame(StartPage)
 
     def switch_frame(self, frame_class):
@@ -42,7 +43,10 @@ class PTools(tk.Tk):
         if self._frame is not None:
             self._frame.destroy()
         self._frame = new_frame
-        self._frame.pack(anchor='center')    
+        
+        self._frame.pack(anchor='center')   
+        
+     
 
 
 #Das Start Fenster was nach dem Starten des Tools gezeigt wird
@@ -80,7 +84,7 @@ class StartPage(ttk.Frame):
         #self.button5=ttk.Button(alles, text ="NPC Generator",command=lambda:master.switch_frame(randomenpc.PageRandomeNPC),width=50)
         #self.button5.pack()
         
-        self.button5=ttk.Button(alles, text ="NPC Generator (In the works)",width=50)
+        self.button5=ttk.Button(alles, text ="NPC Generator (In the works)",width=50,command=lambda: master.switch_frame(randomenpc.PageRandomeNPC))
         self.button5.pack()
         
         self.button3=ttk.Button(alles, text ="Verschiedenes",command=lambda: master.switch_frame(sonstiges.StuffPage),width=50)

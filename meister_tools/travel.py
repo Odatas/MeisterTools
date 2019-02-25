@@ -29,6 +29,8 @@ class PageTravel(ttk.Frame):
         master.title("Reise")
         ttk.Frame.__init__(self, master)
         
+          
+               
         eingaben=tk.Frame(self)
         eingaben.grid(row=0,column=0,pady=50,padx=(100,0),sticky='w')
         
@@ -46,6 +48,11 @@ class PageTravel(ttk.Frame):
         
         knöpfe=tk.Frame(self)
         knöpfe.grid(row=3,column=1,pady=10,padx=100)
+        
+        
+
+
+
         
         #Die Funktion was passiert wenn man auf "Berrechnen" drückt.
         def ButtonPress(event=None):
@@ -266,37 +273,37 @@ class PageTravel(ttk.Frame):
         self.numberLabel2.grid(row=3,column=1,sticky='w')
         self.eingabe2=ttk.Entry(eingaben)
         #Testwert
-        self.eingabe2.insert(0,"1000")
+        self.eingabe2.insert(0,"0")
         self.eingabe2.grid(row=3,column=2,sticky='w')
          
         self.numberLabel3=ttk.Label(eingaben,text="Flusskahn",font='Arial 10')
         self.numberLabel3.grid(row=4,column=1,sticky='w')
         self.eingabe3=ttk.Entry(eingaben)
-        self.eingabe3.insert(3,"1000")
+        self.eingabe3.insert(3,"0")
         self.eingabe3.grid(row=4,column=2,sticky='w')
          
         self.numberLabel4=ttk.Label(eingaben,text="Reisekutsche",font='Arial 10')
         self.numberLabel4.grid(row=5,column=1,sticky='w')
         self.eingabe4=ttk.Entry(eingaben)
-        self.eingabe4.insert(0,"1000")
+        self.eingabe4.insert(0,"0")
         self.eingabe4.grid(row=5,column=2,sticky='w')
          
         self.numberLabel5=ttk.Label(eingaben,text="Seereise, Hängematte",font='Arial 10')
         self.numberLabel5.grid(row=6,column=1,sticky='w')   
         self.eingabe5=ttk.Entry(eingaben)
-        self.eingabe5.insert(0,"1000")
+        self.eingabe5.insert(0,"0")
         self.eingabe5.grid(row=6,column=2,sticky='w')
         
         self.numberLabel6=ttk.Label(eingaben,text="Seereise, Kabine",font='Arial 10')
         self.numberLabel6.grid(row=7,column=1,sticky='w')   
         self.eingabe6=ttk.Entry(eingaben)
-        self.eingabe6.insert(0,"1000")
+        self.eingabe6.insert(0,"0")
         self.eingabe6.grid(row=7,column=2,sticky='w')
         
         self.numberLabel7=ttk.Label(eingaben,text="Pferd Reitend",font='Arial 10')
         self.numberLabel7.grid(row=8,column=1,sticky='w')   
         self.eingabe7=ttk.Entry(eingaben)
-        self.eingabe7.insert(0,"1000")
+        self.eingabe7.insert(0,"0")
         self.eingabe7.grid(row=8,column=2,sticky='w')
         
         auswahlWege = ['Perfekt', 'Gut', 'Mittel','Schlecht']

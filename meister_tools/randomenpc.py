@@ -29,40 +29,61 @@ class PageRandomeNPC(ttk.Frame):
         ttk.Frame.__init__(self, master)
         
         
+        comboBoxFrame=ttk.Frame(self)
+        comboBoxFrame.grid(padx=50,pady=50)
+        
         mainFrame=ttk.Frame(self)
         mainFrame.grid(padx=50,pady=50)
         
+        
+        
+        auswahlRasse = ['Zufall', 'Mensch', 'Elf','Zwerg','Halbelf']
+        
+        comboBoxRasse=ttk.Combobox(comboBoxFrame,values=auswahlRasse,state="readonly")
+        comboBoxRasse.grid(sticky='w')  
+        comboBoxRasse.set('Zufall')
+        
+        
+        
+        auswahlProffession = ['Zufall', 'Söldner']
+        
+        comboBoxProffession=ttk.Combobox(comboBoxFrame,values=auswahlProffession,state="readonly")
+        comboBoxProffession.grid(sticky='w')  
+        comboBoxProffession.set('Zufall')
+        
         def generateNew(event=None):
             
-            #Todo Rasse
-            rasseString="Mensch"
-            rand=random.randint(0,100)
-            if rand>30:
-                rasseString="Mensch"
-            else:
-                if rand>20:
-                    rasseString="Zwerg"
-                else:
-                    if rand>10:
-                        rasseString="Elbe"
-                        
-            #Todo Geschlecht
+           
+            rasseString=comboBoxRasse.get()
+            
+            rasseMensch=80
+            rasseZwerg=10
+            RasseHalbelf=8
+            rasseElf=2
+            
+            
+             #Rasse
+            if rasseString=='Zufall':
+                rasseWert=random.randint(0,100)
+                if rasseWert<=rasseMensch:
+                    rasseString='Mensch'
+                if rasseWert>rasseMensch:
+                    rasseString='Zwerg'
+                if rasseWert>rasseMensch+rasseZwerg:
+                    rasseString='Halbelf'
+                if rasseWert>rasseMensch+rasseZwerg+RasseHalbelf:
+                    rasseString='Elf'
+                
+            #Geschlecht
             geschlechtString="Männlich"
-            rand=random.randint(0,100)
-            if rand>20:
-                geschlechtString="Männlich"
+            
+            if random.randint(0,100)<70:
+                 geschlechtString="Männlich"
             else:
-                geschlechtString="Weiblich"
+                 geschlechtString="Weiblich"
                 
             #Todo Alter
-            alterString="20"
-            if rasseString=="Mensch":
-                alterString=str(random.randint(10,40))
-            if rasseString=="Zwerg":
-                alterString=str(random.randint(50,400))
-            if rasseString=="Elbe":
-                alterString=str(random.randint(100,3000))
-                
+            alterString="20"              
             #Todo LeP
             lepString="20"
             #Todo Amor
