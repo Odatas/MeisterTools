@@ -186,3 +186,9 @@ def berechne_nahrungsbedarf(daysToTravel, gruppengröße, wegZustand, simulation
         water = waterPerDay * gruppengröße * daysToTravel * (1 / chance)
     return food, water
 
+
+def wuerfeln(wuerfelSeiten,anzahl):
+    wurf=0
+    for i in range(anzahl):
+        wurf=wurf+random.randint(1,wuerfelSeiten)
+    return wurf

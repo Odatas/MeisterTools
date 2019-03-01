@@ -19,8 +19,10 @@ except ImportError:
      py3 = True
 
 import random
+import re
      
 from . import patrickstools2
+from . import odatasfunctions as of
 
 
 class PageRandomeNPC(ttk.Frame):
@@ -29,36 +31,97 @@ class PageRandomeNPC(ttk.Frame):
         ttk.Frame.__init__(self, master)
         
         
-        comboBoxFrame=ttk.Frame(self)
-        comboBoxFrame.grid(padx=50,pady=50)
+        comboBoxFrame=ttk.LabelFrame(self)
+        comboBoxFrame.grid(padx=50,pady=50,sticky='w')
         
-        mainFrame=ttk.Frame(self)
-        mainFrame.grid(padx=50,pady=50)
+        mainFrame=ttk.LabelFrame(self)
+        mainFrame.grid(padx=50,pady=50,sticky='w')
         
         
+        #Erfahrungsstufe
+        auswahlErfahrung = ['Unerfahren (900)', 'Durschnittlich  (1000)','Erfahren (1100) ','Kompetent (1200)','Meisterlich (1400)','Brilliant (1700)','Legendär (2100)']        
+        comboErfahrung=ttk.Combobox(comboBoxFrame,values=auswahlErfahrung,state="readonly")
+        comboErfahrung.grid(column=2,row=2)  
+        comboErfahrung.set('Unerfahren (900)')
         
-        auswahlRasse = ['Zufall', 'Mensch', 'Elf','Zwerg','Halbelf']
+        ttk.Label(comboBoxFrame,text='Erfahrungsstufe:').grid(sticky='w',column=0,row=2,padx=(0,10))
         
+        
+        #Rassen. Momentan nur de Spielbaren
+        auswahlRasse = ['Zufall', 'Mensch', 'Elf','Zwerg','Halbelf']        
         comboBoxRasse=ttk.Combobox(comboBoxFrame,values=auswahlRasse,state="readonly")
-        comboBoxRasse.grid(sticky='w')  
+        comboBoxRasse.grid(row=4,column=2)  
         comboBoxRasse.set('Zufall')
         
+        ttk.Label(comboBoxFrame,text='Rasse:').grid(sticky='w',column=0,row=4,padx=(0,10))
         
         
-        auswahlProffession = ['Zufall', 'Söldner']
         
+        #Profession die die Chancen für bestimmte werte Festlegt. 
+        auswahlProffession = ['Zufall', 'Söldner']        
         comboBoxProffession=ttk.Combobox(comboBoxFrame,values=auswahlProffession,state="readonly")
-        comboBoxProffession.grid(sticky='w')  
+        comboBoxProffession.grid(row=6,column=2)  
         comboBoxProffession.set('Zufall')
         
+        ttk.Label(comboBoxFrame,text='Proffession:').grid(sticky='w',column=0,row=6,padx=(0,10))
+        
+        
+        
+        #Kultur 
+        auswahlKultur = ['Bitte Rasse wählen']        
+        comboBoxKultur=ttk.Combobox(comboBoxFrame,values=auswahlKultur,state="readonly")
+        comboBoxKultur.grid(row=8,column=2)  
+        comboBoxKultur.set('Bitte Rasse wählen')
+        
+        ttk.Label(comboBoxFrame,text='Kultur:').grid(sticky='w',column=0,row=6,padx=(0,10))
+        
+        
+        #Funktion die die Kulturcombobox bei Auswahl der Rasse auf die Kulturen der Rasse umstellt
+        def changeKulturCombobox(event=None):
+            
+            rasse=comboBoxRasse.get()
+            
+            if rasse=='Zufall':
+                auswahlKultur=['Bitte Rasse wählen']
+                comboBoxKultur.set('Bitte Rasse wählen')
+                
+            if rasse=='Mensch':
+                auswahlKultur=['Andergaster','Aranier','Bornländer','Fjarninger','Horasier','Maraskaner','Mhanadistani','Mittelreicher','Mohas','Niversen','Norbarden','Nordaventurier','Nostrier','Novadis','Südaventurier','Svelltaler','Thorwaler','Zyklopäer']
+                comboBoxKultur.set(auswahlKultur[0])
+            
+            if rasse=='Elf':
+                auswahlKultur=['Aueelfen','Firnelfen','Waldelfen']
+                comboBoxKultur.set(auswahlKultur[0])    
+            
+            
+            if rasse=='Zwerg':
+                auswahlKultur=['Ambosszwerge','Brillantzwerge','Erzzwerge','Hügelzwerge']
+                comboBoxKultur.set(auswahlKultur[0])
+            
+            if rasse=='Halbelf':
+                auswahlKultur=['Andergaster','Aranier','Aueelfen','Bornländer','Firnelfen','Fjarninger','Horasier','Maraskaner','Mhanadistani','Mittelreicher','Mohas','Niversen','Norbarden','Nordaventurier','Nostrier','Novadis','Südaventurier','Svelltaler','Thorwaler','Waldelfen','Zyklopäer']
+                comboBoxKultur.set(auswahlKultur[0])
+                
+            comboBoxKultur.config(values=auswahlKultur)
+        # Funktion um Werte zu berechnen
         def generateNew(event=None):
             
            
             rasseString=comboBoxRasse.get()
+            #Zieht aus dem Erfahrungs String die Zahl raus welche die AP sind.
+            anzahlAP=int(re.search(r'\d+', comboErfahrung.get()).group()) 
+            #Extrahiert das Level aus dem String
+            level=comboErfahrung.get().split(' ', 1)[0]
+           
             
+            
+            
+            
+            #Momentane Prozentchance welche Rasse wie häufig vorkommt. soll später auf Region bezogen werden. TODO DATENBANK
             rasseMensch=80
             rasseZwerg=10
             RasseHalbelf=8
+            #Wird eigentlich nicht gebraucht da Elf Rest zu 100% ist. 
             rasseElf=2
             
             
@@ -74,8 +137,13 @@ class PageRandomeNPC(ttk.Frame):
                 if rasseWert>rasseMensch+rasseZwerg+RasseHalbelf:
                     rasseString='Elf'
                 
-            #Geschlecht
-            geschlechtString="Männlich"
+            #Geschlechtschancen 
+            
+            if rasseString=='Elf':
+                anzahlAP=anzahlAP-18
+            if rasseString=='Zwerg':
+                anzahlAP=anzahlAP-61
+                
             
             if random.randint(0,100)<70:
                  geschlechtString="Männlich"
@@ -83,7 +151,12 @@ class PageRandomeNPC(ttk.Frame):
                  geschlechtString="Weiblich"
                 
             #Todo Alter
-            alterString="20"              
+            alterString="20"   
+            
+           
+            
+            
+            
             #Todo LeP
             lepString="20"
             #Todo Amor
@@ -174,4 +247,5 @@ class PageRandomeNPC(ttk.Frame):
         randomizeButton=ttk.Button(mainFrame,text="Werte Generieren",command=generateNew,width=50)
         randomizeButton.grid(row=30,column=1,columnspan=2)
         
+        comboBoxRasse.bind("<<ComboboxSelected>>", changeKulturCombobox)
         
