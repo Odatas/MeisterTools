@@ -124,7 +124,7 @@ def simuliere_reise(chance, reisewege):
         #Zähle Reisetag einen hoch
         daysToTravel += 1
         #Die Distanz ist die Normaldistanz-Distanz*Verlangsamungsfaktor
-        pferdReise = pferdReise-(pferdReise*daySlow)
+        pferdReise = pferdReise-(speedHorse*daySlow)
     while fußWeg>0:
         daySlow = (random.randint(chance*100,100)/100)
         daysToTravel += 1
