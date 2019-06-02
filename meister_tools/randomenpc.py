@@ -73,33 +73,37 @@ class PageRandomeNPC(ttk.Frame):
         comboBoxKultur.grid(row=8,column=2)  
         comboBoxKultur.set('Bitte Rasse wählen')
         
-        ttk.Label(comboBoxFrame,text='Kultur:').grid(sticky='w',column=0,row=6,padx=(0,10))
+        ttk.Label(comboBoxFrame,text='Kultur:').grid(sticky='w',column=0,row=8,padx=(0,10))
+        
+        
         
         
         #Funktion die die Kulturcombobox bei Auswahl der Rasse auf die Kulturen der Rasse umstellt
-        def changeKulturCombobox(event=None):
+        def changeKulturCombobox(rasse):
             
-            rasse=comboBoxRasse.get()
+            
+            if rasse=='none':                
+                rasse=comboBoxRasse.get()
             
             if rasse=='Zufall':
                 auswahlKultur=['Bitte Rasse wählen']
                 comboBoxKultur.set('Bitte Rasse wählen')
                 
             if rasse=='Mensch':
-                auswahlKultur=['Andergaster','Aranier','Bornländer','Fjarninger','Horasier','Maraskaner','Mhanadistani','Mittelreicher','Mohas','Niversen','Norbarden','Nordaventurier','Nostrier','Novadis','Südaventurier','Svelltaler','Thorwaler','Zyklopäer']
+                auswahlKultur=['Zufall','Andergaster','Aranier','Bornländer','Fjarninger','Horasier','Maraskaner','Mhanadistani','Mittelreicher','Mohas','Niversen','Norbarden','Nordaventurier','Nostrier','Novadis','Südaventurier','Svelltaler','Thorwaler','Zyklopäer']
                 comboBoxKultur.set(auswahlKultur[0])
             
             if rasse=='Elf':
-                auswahlKultur=['Aueelfen','Firnelfen','Waldelfen']
+                auswahlKultur=['Zufall','Aueelfen','Firnelfen','Waldelfen']
                 comboBoxKultur.set(auswahlKultur[0])    
             
             
             if rasse=='Zwerg':
-                auswahlKultur=['Ambosszwerge','Brillantzwerge','Erzzwerge','Hügelzwerge']
+                auswahlKultur=['Zufall','Ambosszwerge','Brillantzwerge','Erzzwerge','Hügelzwerge']
                 comboBoxKultur.set(auswahlKultur[0])
             
             if rasse=='Halbelf':
-                auswahlKultur=['Andergaster','Aranier','Aueelfen','Bornländer','Firnelfen','Fjarninger','Horasier','Maraskaner','Mhanadistani','Mittelreicher','Mohas','Niversen','Norbarden','Nordaventurier','Nostrier','Novadis','Südaventurier','Svelltaler','Thorwaler','Waldelfen','Zyklopäer']
+                auswahlKultur=['Zufall','Andergaster','Aranier','Aueelfen','Bornländer','Firnelfen','Fjarninger','Horasier','Maraskaner','Mhanadistani','Mittelreicher','Mohas','Niversen','Norbarden','Nordaventurier','Nostrier','Novadis','Südaventurier','Svelltaler','Thorwaler','Waldelfen','Zyklopäer']
                 comboBoxKultur.set(auswahlKultur[0])
                 
             comboBoxKultur.config(values=auswahlKultur)
@@ -117,38 +121,53 @@ class PageRandomeNPC(ttk.Frame):
             
             
             
-            #Momentane Prozentchance welche Rasse wie häufig vorkommt. soll später auf Region bezogen werden. TODO DATENBANK
-            rasseMensch=80
-            rasseZwerg=10
-            RasseHalbelf=8
+            #Momentane Prozentchance welche Rasse wie häufig vorkommt. soll später auf Region bezogen werden. 
+            #TODO DATENBANK
+            rasseMensch=800
+            rasseZwerg=109
+            RasseHalbelf=90
             #Wird eigentlich nicht gebraucht da Elf Rest zu 100% ist. 
-            rasseElf=2
+            rasseElf=1
             
             
              #Rasse
             if rasseString=='Zufall':
-                rasseWert=random.randint(0,100)
+                rasseWert=random.randint(0,1000)
                 if rasseWert<=rasseMensch:
-                    rasseString='Mensch'
+                    rasseString='Mensch'                    
                 if rasseWert>rasseMensch:
                     rasseString='Zwerg'
                 if rasseWert>rasseMensch+rasseZwerg:
                     rasseString='Halbelf'
                 if rasseWert>rasseMensch+rasseZwerg+RasseHalbelf:
                     rasseString='Elf'
+                #comboBoxRasse.set(rasseString)
+                changeKulturCombobox(rasseString)
                 
-            #Geschlechtschancen 
+                
+            
+            
+            
             
             if rasseString=='Elf':
                 anzahlAP=anzahlAP-18
             if rasseString=='Zwerg':
                 anzahlAP=anzahlAP-61
                 
-            
+            #Geschlechtschancen 
             if random.randint(0,100)<70:
                  geschlechtString="Männlich"
             else:
                  geschlechtString="Weiblich"
+                 
+            #Kultur
+            if comboBoxKultur.get()=='Bitte Rasse wählen' or 'Zufall':    
+                kulturString=comboBoxKultur["values"][random.randint(0,len(comboBoxKultur["values"])-1)]
+            else:
+                kulturString=comboBoxKultur.get()
+            
+            
+            
                 
             #Todo Alter
             alterString="20"   
@@ -180,6 +199,7 @@ class PageRandomeNPC(ttk.Frame):
             
             rasseLabel.config(text=rasseString)
             geschlechtLabel.config(text=geschlechtString)
+            kulturLabel.config(text=kulturString)
             alterLabel.config(text=alterString)
             lepLabel.config(text=lepString)
             armorLabel.config(text=armorString)
@@ -202,6 +222,7 @@ class PageRandomeNPC(ttk.Frame):
         #labels        
         ttk.Label(mainFrame,text="Rasse").grid(row=2,column=1,pady=abstandy,sticky='w')
         ttk.Label(mainFrame,text="Geschlecht").grid(row=4,column=1,pady=abstandy,sticky='w')
+        ttk.Label(mainFrame,text="Kultur").grid(row=5,column=1,pady=abstandy,sticky='w')
         ttk.Label(mainFrame,text="Alter").grid(row=6,column=1,pady=abstandy,sticky='w')
         ttk.Label(mainFrame,text="Lebenspunkte").grid(row=8,column=1,pady=abstandy,sticky='w')        
         ttk.Label(mainFrame,text="Rüstung").grid(row=10,column=1,pady=abstandy,sticky='w')
@@ -218,7 +239,9 @@ class PageRandomeNPC(ttk.Frame):
         rasseLabel=ttk.Label(mainFrame,text="")
         rasseLabel.grid(row=2,column=2)
         geschlechtLabel=ttk.Label(mainFrame,text="")
-        geschlechtLabel.grid(row=4,column=2)
+        geschlechtLabel.grid(row=4,column=2)        
+        kulturLabel=ttk.Label(mainFrame,text="")
+        kulturLabel.grid(row=5,column=2)
         alterLabel=ttk.Label(mainFrame,text="")
         alterLabel.grid(row=6,column=2)
         lepLabel=ttk.Label(mainFrame,text="")
@@ -247,5 +270,5 @@ class PageRandomeNPC(ttk.Frame):
         randomizeButton=ttk.Button(mainFrame,text="Werte Generieren",command=generateNew,width=50)
         randomizeButton.grid(row=30,column=1,columnspan=2)
         
-        comboBoxRasse.bind("<<ComboboxSelected>>", changeKulturCombobox)
+        comboBoxRasse.bind("<<ComboboxSelected>>", changeKulturCombobox('none'))
         
