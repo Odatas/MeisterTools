@@ -39,7 +39,7 @@ class PageRandomeNPC(ttk.Frame):
         
         
         #Erfahrungsstufe
-        auswahlErfahrung = ['Unerfahren (900)', 'Durschnittlich  (1000)','Erfahren (1100) ','Kompetent (1200)','Meisterlich (1400)','Brilliant (1700)','Legendär (2100)']        
+        auswahlErfahrung = ['Unerfahren (900)', 'Durchschnittlich  (1000)','Erfahren (1100) ','Kompetent (1200)','Meisterlich (1400)','Brilliant (1700)','Legendär (2100)']        
         comboErfahrung=ttk.Combobox(comboBoxFrame,values=auswahlErfahrung,state="readonly")
         comboErfahrung.grid(column=2,row=2)  
         comboErfahrung.set('Unerfahren (900)')
@@ -105,6 +105,43 @@ class PageRandomeNPC(ttk.Frame):
             anzahlAP=int(re.search(r'\d+', comboErfahrung.get()).group()) 
             #Extrahiert das Level aus dem String
             level=comboErfahrung.get().split(' ', 1)[0]
+            #Maximalwert für Heldenerschaffung je nach Level
+            if level=='Unerfahren':
+               maxEigenschaft=11
+               maxsumEigenschaft=95
+               maxFertigkeit=10
+               maxKampf=8
+            if level=='Durchschnittlich':
+               maxEigenschaft=13
+               maxsumEigenschaft=98
+               maxFertigkeit=10
+               maxKampf=10
+            if level=='Erfahren':
+               maxEigenschaft=14
+               maxsumEigenschaft=100
+               maxFertigkeit=10
+               maxKampf=12
+            if level=='Kompetent':
+               maxEigenschaft=15
+               maxsumEigenschaft=102
+               maxFertigkeit=13
+               maxKampf=14
+            if level=='Meisterlich':
+               maxEigenschaft=16
+               maxsumEigenschaft=105
+               maxFertigkeit=16
+               maxKampf=16
+            if level=='Brilliant':
+               maxEigenschaft=17
+               maxsumEigenschaft=109
+               maxFertigkeit=19
+               maxKampf=18
+            if level=='Legendär':
+               maxEigenschaft=18
+               maxsumEigenschaft=114
+               maxFertigkeit=20
+               maxKampf=20
+               
            
             #Rasse
             #Ausgewählte Rasse aus der Combobox auslesen
@@ -135,7 +172,7 @@ class PageRandomeNPC(ttk.Frame):
 
                 
             #Geschlecht 
-            if random.randint(0,100)<70:
+            if random.randint(0,100)<80:
                  geschlechtString="Männlich"
             else:
                  geschlechtString="Weiblich"
@@ -164,12 +201,54 @@ class PageRandomeNPC(ttk.Frame):
             #Todo Alter
             alterString="20"   
             
-           
+            #Eigenschaften
             
             
+            eigenschaften={
+            "KK": 8,
+            "MU": 8,
+            "KL": 8,
+            "IN": 8,
+            "CH": 8,
+            "FF": 8,
+            "GE": 8,
+            "KO": 8
+            }
+            #Bei Rasse Mensch oder Halbelf Zufälliger Wert+1
+            if rasseString=='Mensch' or rasseString=='Halbelf':
+                zufall=random.choice(list(eigenschaften.keys()))
+                eigenschaften[zufall]=eigenschaften[zufall]+1   
+            #Bei Elf IN und GE +1 und Zufällig KL oder KK -2
+            if rasseString=='Elf':
+                eigenschaften["IN"]=eigenschaften["IN"]+1
+                eigenschaften["GE"]=eigenschaften["GE"]+1                
+                if random.randint(1,2)==1:
+                    eigenschaften["KL"]=eigenschaften["KL"]-2
+                else:
+                    eigenschaften["KK"]=eigenschaften["KK"]-2
+            #Bei Zwerg KO und KK +1 und CH und GE -2
+            if rasseString=='Zwerg':
+                eigenschaften["KO"]=eigenschaften["KO"]+1
+                eigenschaften["KK"]=eigenschaften["KK"]+1                
+                if random.randint(1,2)==1:
+                    eigenschaften["CH"]=eigenschaften["CH"]-2
+                else:
+                    eigenschaften["GE"]=eigenschaften["GE"]-2
+                
+               
+                  
             
-            #Todo LeP
-            lepString="20"
+            
+            #Lebenspunkte            
+            if rasseString=='Mensch':
+                lepString=5
+            if rasseString=='Elf':
+                lepString=2
+            if rasseString=='Halbelf':
+                lepString=5
+            if rasseString=='Zwerg':
+                lepString=8
+                
             #Todo Amor
             armorString="Leder"
             #Todo ATK
