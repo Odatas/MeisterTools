@@ -108,7 +108,8 @@ class PageRandomeNPC(ttk.Frame):
             #Maximalwert für Heldenerschaffung je nach Level
             if level=='Unerfahren':
                maxEigenschaft=11
-               maxsumEigenschaft=95
+               #Max Summe begrenzt da max eigenschaftswert auf Unerfahren 11
+               maxsumEigenschaft=88
                maxFertigkeit=10
                maxKampf=8
             if level=='Durchschnittlich':
@@ -235,9 +236,25 @@ class PageRandomeNPC(ttk.Frame):
                 else:
                     eigenschaften["GE"]=eigenschaften["GE"]-2
                 
-               
-                  
+            eigenschaftsSteigerung=['FF','GE','KK','KO','FF','GE','KK','KO','MU','KL','IN','CH']
             
+            summeEigenschaften=sum(eigenschaften.values())
+            
+            while summeEigenschaften<maxsumEigenschaft:
+                zufall=random.choice(eigenschaftsSteigerung)
+                if eigenschaften[zufall]<maxEigenschaft:
+                    eigenschaften[zufall]+=1
+                    summeEigenschaften+=1
+                    if eigenschaften[zufall]<15:
+                        anzahlAP-=15                       
+                    else:
+                        faktor=eigenschaften[zufall]-13
+                        anzahlAP=anzahlAP-(faktor*15)
+            #Kampftechnik #TODO
+            
+           
+                   
+                         
             
             #Lebenspunkte            
             if rasseString=='Mensch':
@@ -251,8 +268,7 @@ class PageRandomeNPC(ttk.Frame):
                 
             #Todo Amor
             armorString="Leder"
-            #Todo ATK
-            atkString="10"
+           
             #Todo DEF
             defString="8"
             #Todo DMG
@@ -285,6 +301,14 @@ class PageRandomeNPC(ttk.Frame):
             fluchtLabel.config(text=fluchtString)
             
             
+            KörperkraftLabel.config(text=eigenschaften["KK"])
+            MutLabel.config(text=eigenschaften["MU"])
+            KlugheitLabel.config(text=eigenschaften["KL"])
+            IntuitionLabel.config(text=eigenschaften["IN"])
+            CharismaLabel.config(text=eigenschaften["CH"])
+            FingerfertigkeitLabel.config(text=eigenschaften["FF"])
+            GewandheitLabel.config(text=eigenschaften["GE"])
+            KonstitutionLabel.config(text=eigenschaften["KO"])
             
             
             
@@ -306,6 +330,15 @@ class PageRandomeNPC(ttk.Frame):
         ttk.Label(mainFrame,text="Schmerzstufe 2").grid(row=24,column=1,pady=abstandy,sticky='w')
         ttk.Label(mainFrame,text="Schmerzstufe 3").grid(row=26,column=1,pady=abstandy,sticky='w')
         ttk.Label(mainFrame,text="Flucht LeP").grid(row=28,column=1,pady=abstandy,sticky='w')
+        
+        ttk.Label(mainFrame,text="Körperkraft").grid(row=2,column=3,pady=abstandy,sticky='w')
+        ttk.Label(mainFrame,text="Mut").grid(row=3,column=3,pady=abstandy,sticky='w')
+        ttk.Label(mainFrame,text="Klugheit").grid(row=4,column=3,pady=abstandy,sticky='w')
+        ttk.Label(mainFrame,text="Intuition").grid(row=6,column=3,pady=abstandy,sticky='w')
+        ttk.Label(mainFrame,text="Charisma").grid(row=8,column=3,pady=abstandy,sticky='w')
+        ttk.Label(mainFrame,text="Fingerfertigkeit").grid(row=10,column=3,pady=abstandy,sticky='w')
+        ttk.Label(mainFrame,text="Gewandheit").grid(row=12,column=3,pady=abstandy,sticky='w')
+        ttk.Label(mainFrame,text="Konstitution").grid(row=14,column=3,pady=abstandy,sticky='w')
         
         rasseLabel=ttk.Label(mainFrame,text="")
         rasseLabel.grid(row=2,column=2)
@@ -337,6 +370,23 @@ class PageRandomeNPC(ttk.Frame):
         a3Label.grid(row=26,column=2)
         fluchtLabel=ttk.Label(mainFrame,text="")
         fluchtLabel.grid(row=28,column=2)
+        
+        KörperkraftLabel=ttk.Label(mainFrame,text="")
+        KörperkraftLabel.grid(row=2, column=4)
+        MutLabel=ttk.Label(mainFrame,text="")
+        MutLabel.grid(row=3, column=4)
+        KlugheitLabel=ttk.Label(mainFrame,text="")
+        KlugheitLabel.grid(row=4, column=4)
+        IntuitionLabel=ttk.Label(mainFrame,text="")
+        IntuitionLabel.grid(row=6, column=4)
+        CharismaLabel=ttk.Label(mainFrame,text="")
+        CharismaLabel.grid(row=8, column=4)
+        FingerfertigkeitLabel=ttk.Label(mainFrame,text="")
+        FingerfertigkeitLabel.grid(row=10, column=4)
+        GewandheitLabel=ttk.Label(mainFrame,text="")
+        GewandheitLabel.grid(row=12, column=4)
+        KonstitutionLabel=ttk.Label(mainFrame,text="")
+        KonstitutionLabel.grid(row=14, column=4)
         
         randomizeButton=ttk.Button(mainFrame,text="Werte Generieren",command=generateNew,width=50)
         randomizeButton.grid(row=30,column=1,columnspan=2)
