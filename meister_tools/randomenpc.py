@@ -24,6 +24,15 @@ import re
 from . import patrickstools2
 from . import odatasfunctions as of
 
+class Kampftechnik:
+    def __init__(self,r = 0,i = 0,j = 0,k = 0):
+        self.name = r
+        self.leiteigenschaft = i
+        self.steigerungsfaktor = j
+        self.wert = k
+        
+        
+
 
 class PageRandomeNPC(ttk.Frame):
 
@@ -251,10 +260,27 @@ class PageRandomeNPC(ttk.Frame):
                         faktor=eigenschaften[zufall]-13
                         anzahlAP=anzahlAP-(faktor*15)
             #Kampftechnik #TODO
+               
+            kampftechnikliste=[
+            Kampftechnik("Armbrüste","FF","B",6+int((eigenschaften["FF"]-8)/3)),
+            Kampftechnik("Bögen","FF","C",6+int((eigenschaften["FF"]-8)/3)),
+            Kampftechnik("Dolche","GE","B",6+int((eigenschaften["MU"]-8)/3)),
+            Kampftechnik("Fechtwaffen","GE","C",6+int((eigenschaften["MU"]-8)/3)), 
+            Kampftechnik("Hiebwaffen","KK","C",6+int((eigenschaften["MU"]-8)/3)),     
+            Kampftechnik("Kettenwaffen","KK","C",6+int((eigenschaften["MU"]-8)/3)),
+            Kampftechnik("Lanzen","KK","B",6+int((eigenschaften["MU"]-8)/3)),
+            Kampftechnik("Raufen","GE","B",6+int((eigenschaften["MU"]-8)/3)),
+            Kampftechnik("Raufen","KK","B",6+int((eigenschaften["MU"]-8)/3)),
+            Kampftechnik("Schild","KO","C",6+int((eigenschaften["MU"]-8)/3)),
+            Kampftechnik("Schwerter","GE","C",6+int((eigenschaften["MU"]-8)/3)),
+            Kampftechnik("Schwerter","KK","C",6+int((eigenschaften["MU"]-8)/3)),
+            Kampftechnik("Stangenwaffen","GE","C",6+int((eigenschaften["MU"]-8)/3)),
+            Kampftechnik("Stangenwaffen","GE","C",6+int((eigenschaften["MU"]-8)/3)),
+            Kampftechnik("Wurfwaffen","FF","B",6+int((eigenschaften["MU"]-8)/3)),
+            Kampftechnik("Zweihandhiebwaffen","KK","C",6+int((eigenschaften["FF"]-8)/3)),
+            Kampftechnik("Zweihandschwert","KK","C",6+int((eigenschaften["MU"]-8)/3))
+            ]
             
-           
-                   
-                         
             
             #Lebenspunkte            
             if rasseString=='Mensch':
@@ -283,7 +309,7 @@ class PageRandomeNPC(ttk.Frame):
             a3String="25%"
             #Todo Flucht LeP
             fluchtString="5"
-            
+            atkString=10
             rasseLabel.config(text=rasseString)
             geschlechtLabel.config(text=geschlechtString)
             kulturLabel.config(text=kulturString)
