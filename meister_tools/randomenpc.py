@@ -262,26 +262,59 @@ class PageRandomeNPC(ttk.Frame):
             #Kampftechnik #TODO
                
             kampftechnikliste=[
+            #0
             Kampftechnik("Armbrüste","FF","B",6+int((eigenschaften["FF"]-8)/3)),
+            #1
             Kampftechnik("Bögen","FF","C",6+int((eigenschaften["FF"]-8)/3)),
+            #2
             Kampftechnik("Dolche","GE","B",6+int((eigenschaften["MU"]-8)/3)),
-            Kampftechnik("Fechtwaffen","GE","C",6+int((eigenschaften["MU"]-8)/3)), 
-            Kampftechnik("Hiebwaffen","KK","C",6+int((eigenschaften["MU"]-8)/3)),     
+            #3
+            Kampftechnik("Fechtwaffen","GE","C",6+int((eigenschaften["MU"]-8)/3)),
+            #4
+            Kampftechnik("Hiebwaffen","KK","C",6+int((eigenschaften["MU"]-8)/3)),
+            #5
             Kampftechnik("Kettenwaffen","KK","C",6+int((eigenschaften["MU"]-8)/3)),
+            #6
             Kampftechnik("Lanzen","KK","B",6+int((eigenschaften["MU"]-8)/3)),
-            Kampftechnik("Raufen","GE","B",6+int((eigenschaften["MU"]-8)/3)),
-            Kampftechnik("Raufen","KK","B",6+int((eigenschaften["MU"]-8)/3)),
-            Kampftechnik("Schild","KO","C",6+int((eigenschaften["MU"]-8)/3)),
-            Kampftechnik("Schwerter","GE","C",6+int((eigenschaften["MU"]-8)/3)),
-            Kampftechnik("Schwerter","KK","C",6+int((eigenschaften["MU"]-8)/3)),
-            Kampftechnik("Stangenwaffen","GE","C",6+int((eigenschaften["MU"]-8)/3)),
-            Kampftechnik("Stangenwaffen","GE","C",6+int((eigenschaften["MU"]-8)/3)),
+            #7            
+            Kampftechnik("Schild","KK","C",6+int((eigenschaften["MU"]-8)/3)),
+            #8
             Kampftechnik("Wurfwaffen","FF","B",6+int((eigenschaften["MU"]-8)/3)),
+            #9
             Kampftechnik("Zweihandhiebwaffen","KK","C",6+int((eigenschaften["FF"]-8)/3)),
+            #10
             Kampftechnik("Zweihandschwert","KK","C",6+int((eigenschaften["MU"]-8)/3))
             ]
             
             
+            if eigenschaften["GE"]>eigenschaften["KK"]:
+                #11
+                x=Kampftechnik("Raufen","GE","B",6+int((eigenschaften["MU"]-8)/3))
+                #12
+                y=Kampftechnik("Schwerter","GE","C",6+int((eigenschaften["MU"]-8)/3))
+                #13
+                z=Kampftechnik("Stangenwaffen","GE","C",6+int((eigenschaften["MU"]-8)/3))
+            else:
+               x=Kampftechnik("Raufen","KK","B",6+int((eigenschaften["MU"]-8)/3))
+               y=Kampftechnik("Schwerter","KK","C",6+int((eigenschaften["MU"]-8)/3))
+               z=Kampftechnik("Stangenwaffen","KK","C",6+int((eigenschaften["MU"]-8)/3))
+            kampftechnikliste.append(x)
+            kampftechnikliste.append(y)
+            kampftechnikliste.append(z)
+            
+            maxkampf=0
+            for x in range(len(kampftechnikliste)):
+                if (kampftechnikliste[x].wert)>maxkampf:
+                    if kampftechnikliste[x].name!="Schild":
+                        maxkampf=kampftechnikliste[x].wert
+            angriffstechnik=[]        
+            for x in range(len(kampftechnikliste)):
+                if kampftechnikliste[x].wert==maxkampf:
+                    if kampftechnikliste[x].name!="Schild":
+                        angriffstechnik.append(kampftechnikliste[x].name)
+                
+            primärkampftechnik=random.choice(angriffstechnik)
+            print(primärkampftechnik)
             #Lebenspunkte            
             if rasseString=='Mensch':
                 lepString=5
@@ -336,11 +369,28 @@ class PageRandomeNPC(ttk.Frame):
             GewandheitLabel.config(text=eigenschaften["GE"])
             KonstitutionLabel.config(text=eigenschaften["KO"])
             
+            ArmbrüsteLabel.config(text=kampftechnikliste[0].wert)
+            BögenLabel.config(text=kampftechnikliste[1].wert)
+            DolcheLabel.config(text=kampftechnikliste[2].wert)
+            FechtwaffenLabel.config(text=kampftechnikliste[3].wert)
+            HiebwaffenLabel.config(text=kampftechnikliste[4].wert)
+            KettenwaffenLabel.config(text=kampftechnikliste[5].wert)
+            LanzenLabel.config(text=kampftechnikliste[7].wert)
+            RaufenLabel.config(text=kampftechnikliste[11].wert)
+            SchildLabel.config(text=kampftechnikliste[7].wert)
+            SchwerterLabel.config(text=kampftechnikliste[12].wert)
+            StangenwaffenLabel.config(text=kampftechnikliste[13].wert)
+            WurfwaffenLabel.config(text=kampftechnikliste[8].wert)
+            ZweihandhiebwaffenLabel.config(text=kampftechnikliste[9].wert)
+            ZweihandschwerterLabel.config(text=kampftechnikliste[10].wert)
+            
             
             
         abstandy=5
         
-        #labels        
+        #labels  
+        #Attribute
+        ttk.Label(mainFrame,text="Attribute",font="helvetica 10 bold").grid(row=1,column=1,pady=abstandy,sticky='w')
         ttk.Label(mainFrame,text="Rasse").grid(row=2,column=1,pady=abstandy,sticky='w')
         ttk.Label(mainFrame,text="Geschlecht").grid(row=4,column=1,pady=abstandy,sticky='w')
         ttk.Label(mainFrame,text="Kultur").grid(row=3,column=1,pady=abstandy,sticky='w')
@@ -357,6 +407,8 @@ class PageRandomeNPC(ttk.Frame):
         ttk.Label(mainFrame,text="Schmerzstufe 3").grid(row=26,column=1,pady=abstandy,sticky='w')
         ttk.Label(mainFrame,text="Flucht LeP").grid(row=28,column=1,pady=abstandy,sticky='w')
         
+        #Eigenschaften 
+        ttk.Label(mainFrame,text="Eigenschafte",font="helvetica 10 bold").grid(row=1,column=3,pady=abstandy,sticky='w')
         ttk.Label(mainFrame,text="Körperkraft").grid(row=2,column=3,pady=abstandy,sticky='w')
         ttk.Label(mainFrame,text="Mut").grid(row=3,column=3,pady=abstandy,sticky='w')
         ttk.Label(mainFrame,text="Klugheit").grid(row=4,column=3,pady=abstandy,sticky='w')
@@ -366,6 +418,24 @@ class PageRandomeNPC(ttk.Frame):
         ttk.Label(mainFrame,text="Gewandheit").grid(row=12,column=3,pady=abstandy,sticky='w')
         ttk.Label(mainFrame,text="Konstitution").grid(row=14,column=3,pady=abstandy,sticky='w')
         
+        #Kampftechniken
+        ttk.Label(mainFrame,text="Kampfertigkeiten",font="helvetica 10 bold").grid(row=15,column=3,pady=abstandy,sticky='w')        
+        ttk.Label(mainFrame,text="Armbrüste").grid(row=16,column=3,pady=abstandy,sticky='w')
+        ttk.Label(mainFrame,text="Bögen").grid(row=18,column=3,pady=abstandy,sticky='w')
+        ttk.Label(mainFrame,text="Dolche").grid(row=20,column=3,pady=abstandy,sticky='w')
+        ttk.Label(mainFrame,text="Fechtwaffen").grid(row=22,column=3,pady=abstandy,sticky='w')
+        ttk.Label(mainFrame,text="Hiebwaffen").grid(row=24,column=3,pady=abstandy,sticky='w')
+        ttk.Label(mainFrame,text="Kettenwaffen").grid(row=26,column=3,pady=abstandy,sticky='w')
+        ttk.Label(mainFrame,text="Lanzen").grid(row=28,column=3,pady=abstandy,sticky='w')
+        ttk.Label(mainFrame,text="Raufen").grid(row=30,column=3,pady=abstandy,sticky='w')
+        ttk.Label(mainFrame,text="Schild").grid(row=32,column=3,pady=abstandy,sticky='w')
+        ttk.Label(mainFrame,text="Schwerter").grid(row=34,column=3,pady=abstandy,sticky='w')
+        ttk.Label(mainFrame,text="Stangenwaffen").grid(row=36,column=3,pady=abstandy,sticky='w')
+        ttk.Label(mainFrame,text="Wurfwaffen").grid(row=38,column=3,pady=abstandy,sticky='w')
+        ttk.Label(mainFrame,text="Zweihandhiebwaffen").grid(row=40,column=3,pady=abstandy,sticky='w')
+        ttk.Label(mainFrame,text="Zweihandschwert").grid(row=42,column=3,pady=abstandy,sticky='w')
+        
+        #Attribute Labels
         rasseLabel=ttk.Label(mainFrame,text="")
         rasseLabel.grid(row=2,column=2)
         geschlechtLabel=ttk.Label(mainFrame,text="")
@@ -397,6 +467,7 @@ class PageRandomeNPC(ttk.Frame):
         fluchtLabel=ttk.Label(mainFrame,text="")
         fluchtLabel.grid(row=28,column=2)
         
+        #Eigenschaften Label
         KörperkraftLabel=ttk.Label(mainFrame,text="")
         KörperkraftLabel.grid(row=2, column=4)
         MutLabel=ttk.Label(mainFrame,text="")
@@ -413,6 +484,40 @@ class PageRandomeNPC(ttk.Frame):
         GewandheitLabel.grid(row=12, column=4)
         KonstitutionLabel=ttk.Label(mainFrame,text="")
         KonstitutionLabel.grid(row=14, column=4)
+        
+        #Kampfeigenschaften
+        ArmbrüsteLabel=ttk.Label(mainFrame,text="")
+        ArmbrüsteLabel.grid(row=16, column=4)
+        BögenLabel=ttk.Label(mainFrame,text="")
+        BögenLabel.grid(row=18, column=4)
+        DolcheLabel=ttk.Label(mainFrame,text="")
+        DolcheLabel.grid(row=20, column=4)
+        FechtwaffenLabel=ttk.Label(mainFrame,text="")
+        FechtwaffenLabel.grid(row=22, column=4)
+        HiebwaffenLabel=ttk.Label(mainFrame,text="")
+        HiebwaffenLabel.grid(row=24, column=4)
+        KettenwaffenLabel=ttk.Label(mainFrame,text="")
+        KettenwaffenLabel.grid(row=26, column=4)
+        LanzenLabel=ttk.Label(mainFrame,text="")
+        LanzenLabel.grid(row=28, column=4)
+        RaufenLabel=ttk.Label(mainFrame,text="")
+        RaufenLabel.grid(row=30, column=4)
+        SchildLabel=ttk.Label(mainFrame,text="")
+        SchildLabel.grid(row=32, column=4)
+        SchwerterLabel=ttk.Label(mainFrame,text="")
+        SchwerterLabel.grid(row=34, column=4)
+        StangenwaffenLabel=ttk.Label(mainFrame,text="")
+        StangenwaffenLabel.grid(row=36, column=4)
+        WurfwaffenLabel=ttk.Label(mainFrame,text="")
+        WurfwaffenLabel.grid(row=38, column=4)
+        ZweihandhiebwaffenLabel=ttk.Label(mainFrame,text="")
+        ZweihandhiebwaffenLabel.grid(row=40, column=4)
+        ZweihandschwerterLabel=ttk.Label(mainFrame,text="")
+        ZweihandschwerterLabel.grid(row=42, column=4)
+
+        
+        
+        
         
         randomizeButton=ttk.Button(mainFrame,text="Werte Generieren",command=generateNew,width=50)
         randomizeButton.grid(row=30,column=1,columnspan=2)
