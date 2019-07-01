@@ -1,5 +1,10 @@
 # MeisterTools
 
+## Alpha 0.30
+
+- Charakter/NPC Generator: Auf Knopfdruck wird nach den Regeln im Grundregelwerk ein Character erschaffen. Momentan befindet sich das Tool noch in der Frühen Phase. Alle Basiswerte werden dabei berechnet. Fertigkeiten und Sonderfertigkeiten werden noch nicht beachtet. Hier bitte auch Sanity Checks machen ob es fehler in der Berechnung gibt. 
+- Kleinere Bugfixes
+
 ## Alpha 0.21
 
 - Ein neues Menu ist nun da "Verschiedenes" beinhaltet all die kleinen Dingen fÃ¼r die ein eingenes Fenser keinen Sinn macht. Momentan ist da nicht viel drin aber vielleicht wird das ja noch.
