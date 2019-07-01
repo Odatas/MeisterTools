@@ -96,5 +96,5 @@ class StartPage(ttk.Frame):
        
         ttk.Button(alles, text="Quit", command=self.master.destroy,width=50).pack(pady=30)
         
-        self.version=ttk.Label(version,text="Version Alpha 0.21")
+        self.version=ttk.Label(version,text="Version Alpha 0.30")
         self.version.pack(anchor='se')
