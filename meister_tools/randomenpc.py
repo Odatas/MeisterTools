@@ -91,6 +91,9 @@ class PageRandomeNPC(ttk.Frame):
         comboBoxProffession.set('Zufall')
         
         ttk.Label(comboBoxFrame,text='Proffession:').grid(sticky='w',column=0,row=8,padx=(0,10))
+        ttk.Label(comboBoxFrame,text='Einstellungen zu Kultur und Proffession haben').grid(sticky='w',column=0,row=9,padx=(0,10),columnspan=4)
+        ttk.Label(comboBoxFrame,text='momentan noch keine Auswirkungen auf die Wert').grid(sticky='w',column=0,row=10,padx=(0,10),columnspan=4)
+         
         
     
         
@@ -193,7 +196,7 @@ class PageRandomeNPC(ttk.Frame):
                 
 
                 
-            #Geschlecht 
+            #Geschlecht 80% Männeranteil. Würstchenfest in Aventurien.
             if random.randint(0,100)<80:
                  geschlechtString="Männlich"
             else:
@@ -217,15 +220,14 @@ class PageRandomeNPC(ttk.Frame):
                 
                 if rasseString=='Halbelf':
                     auswahlKultur=['Zufall','Andergaster','Aranier','Aueelfen','Bornländer','Firnelfen','Fjarninger','Horasier','Maraskaner','Mhanadistani','Mittelreicher','Mohas','Niversen','Norbarden','Nordaventurier','Nostrier','Novadis','Südaventurier','Svelltaler','Thorwaler','Waldelfen','Zyklopäer']
-                #Aus der Kulturliste wird zufällig eine ausgewählt. Erster wird "Zufall" wird übersprungen.
+                #Aus der Kulturliste wird zufällig eine ausgewählt. Erster Wert  "Zufall" wird übersprungen.
                 kulturString=auswahlKultur[random.randint(1,len(auswahlKultur)-1)]
                 
             #Todo Alter
             alterString="20"   
             
-            #Eigenschaften
-            
-            
+            #Eigenschaften            
+            #Dictionärie für Eigenschaften
             eigenschaften={
             "KK": 8,
             "MU": 8,
@@ -256,11 +258,11 @@ class PageRandomeNPC(ttk.Frame):
                     eigenschaften["CH"]=eigenschaften["CH"]-2
                 else:
                     eigenschaften["GE"]=eigenschaften["GE"]-2
-                
+            #Legt den Bias auf Eigenschaften fest. Nahkampffertigkeiten sind doppelt vorhanden.    
             eigenschaftsSteigerung=['FF','GE','KK','KO','FF','GE','KK','KO','MU','KL','IN','CH']
             
             summeEigenschaften=sum(eigenschaften.values())
-            
+            #Eigenschaften bis zum Maximum erhöhen.
             while summeEigenschaften<maxsumEigenschaft:
                 zufall=random.choice(eigenschaftsSteigerung)
                 if eigenschaften[zufall]<maxEigenschaft:
@@ -271,8 +273,8 @@ class PageRandomeNPC(ttk.Frame):
                     else:
                         faktor=eigenschaften[zufall]-13
                         anzahlAP=anzahlAP-(faktor*15)
-            #Kampftechnik #TODO
-            
+            #Kampftechnikn
+            #Für Jede Kampftechnik jeweils Name, Leiteigenschaft, Steigerungsfaktor und Momentaner Wert
             fernkampftechnikliste=[
             #0
             Kampftechnik("Armbrüste","FF","B",6+int((eigenschaften["FF"]-8)/3)),
@@ -302,7 +304,7 @@ class PageRandomeNPC(ttk.Frame):
             Kampftechnik("Zweihandschwert","KK","C",6+int((eigenschaften["MU"]-8)/3))
             ]
             
-            
+            #Für manche Kampffertigkeiten gelten zwei Eigenschaften. Die höhere wird hier als Leiteigenschaft eingetragen.
             if eigenschaften["GE"]>eigenschaften["KK"]:
                 #8
                 x=Kampftechnik("Raufen","GE","B",6+int((eigenschaften["MU"]-8)/3))
@@ -318,22 +320,27 @@ class PageRandomeNPC(ttk.Frame):
             nahkampftechnikliste.append(y)
             nahkampftechnikliste.append(z)
             
+            #Maximalwert herausfinden.
             maxAngriff=0
             for x in range(len(nahkampftechnikliste)):
                 if (nahkampftechnikliste[x].wert)>maxAngriff:
                     if nahkampftechnikliste[x].name!="Schild":
                         maxAngriff=nahkampftechnikliste[x].wert
             angriffstechnik=[]        
+            #Liste aller Kampftechnikern erstellen die den Maximalwert haben.
             for x in range(len(nahkampftechnikliste)):
                 if nahkampftechnikliste[x].wert==maxAngriff:
                     if nahkampftechnikliste[x].name!="Schild":
                         angriffstechnik.append(nahkampftechnikliste[x].name)
-                
+            #Kampftechnik aus Liste auswählen.   
             primärkampftechnik=random.choice(angriffstechnik)
+            #Rausfinden an welcher Postion die Kampftechnik in der Nahkampfstechnikliste liegt
+            for x in range(len(nahkampftechnikliste)):
+                if primärkampftechnik==nahkampftechnikliste[x].name:
+                    listenplatz=x
             
             
-            
-            
+            #Eine Zufällige Waffe aus der Waffendb auswählen.
             searchString= "SELECT * FROM waffen WHERE kategorie='"+primärkampftechnik+"' ORDER BY RANDOM() LIMIT 1"     
             c = conn.cursor()
             c.execute(searchString)
@@ -348,13 +355,25 @@ class PageRandomeNPC(ttk.Frame):
                reichweite=row[6]
                preis=row[7]
             
-            #Steigerung Angriff TODO
+            #Steigerung Angriff TODO. Momentan wird einfach auf einen Zufälligen wert zwischen Wert+0,5Maxwerdifferenz und Maxwert ausgewählt
             atkString=maxAngriff+int(random.randint(50,100)*(int(maxKampf)-maxAngriff)/100)
             
-            for x in range(len(nahkampftechnikliste)):
-                if nahkampftechnikliste[x].name==primärkampftechnik:
-                    nahkampftechnikliste[x].wert=atkString
-                    
+            
+            nahkampftechnikliste[listenplatz].wert=atkString
+            
+            #Waffenbonus/malus einrechnen
+            #ATK Modifikator für die Waffe in Angriff einrechnen.
+            if atmod=="":
+                atkString = atkString
+            else:
+                atkString=str(int(atkString)+int(atmod))
+            #Bonus für Schadensschwelle berechnen
+            if schadensschwelle=="":
+                schadensschwelle=50
+            if schadensschwelle<eigenschaften[nahkampftechnikliste[listenplatz].leiteigenschaft]:
+                #Eleganter undurchschauberer weg die Schadensschwelle zu erhöhen.
+                dmgString=dmgString.replace(dmgString[len(dmgString)-1],str(int(dmgString[len(dmgString)-1])+(nahkampftechnikliste[listenplatz].wert-schadensschwelle)))
+              
             #Basiswerte Rasse
             if rasseString=='Mensch':
                 lepString=5
@@ -377,24 +396,25 @@ class PageRandomeNPC(ttk.Frame):
                 zaehigkeit=-4
                 geschwindigkeit=6
             #Lebenspunkte 
-            lepString=lepString+2*eigenschaften["KO"] 
-            
+            lepString=lepString+2*eigenschaften["KO"]             
             #Seelenkraft            
-            seelenkraft=seelenkraft+(eigenschaften["MU"]+eigenschaften["KL"]+eigenschaften["IN"])/6
+            seelenkraft=seelenkraft+round((eigenschaften["MU"]+eigenschaften["KL"]+eigenschaften["IN"])/6)
             #zähigkeit
-            zaehigkeit=zaehigkeit++(eigenschaften["KO"]+eigenschaften["KO"]+eigenschaften["KK"])/6
+            zaehigkeit=zaehigkeit+round((eigenschaften["KO"]+eigenschaften["KO"]+eigenschaften["KK"])/6)
             #Ausweichen
-            ausweichen=eigenschaften["GE"]/2
+            ausweichen=int(round(eigenschaften["GE"]/2,0))
             #Initative
-            initative=(eigenschaften["MU"]+eigenschaften["GE"])/2+random.randint(1,6)
+            initative=round((eigenschaften["MU"]+eigenschaften["GE"])/2+random.randint(1,6))
             #Todo Amor
             armorString="Leder"
            
-            #Todo DEF
-            defString="8"
+            #Todo DEF also Parade
+            if pamod=="" or primärkampftechnik=="Raufen":
+                defString="Keine Parade"
+            else:                
+                defString=int(int(atkString)/2)+(int(atkString) % 2 > 0)
                     
-            #Todo Körperbeherschung
-            beherschungString="10"
+            
             #Todo Schmerzstufen
             a1String=round(0.75*lepString)
             a2String=round(0.5*lepString)
@@ -414,11 +434,15 @@ class PageRandomeNPC(ttk.Frame):
             defLabel.config(text=defString)
             dmgLabel.config(text=dmgString)
             waffeLabel.config(text=waffeString)
-            beherschungLabel.config(text=beherschungString)
             a1Label.config(text=a1String)
             a2Label.config(text=a2String)
             a3Label.config(text=a3String)
             fluchtLabel.config(text=fluchtString)
+            seelenkraftLabel.config(text=seelenkraft)
+            zaehigkeitLabel.config(text=zaehigkeit)
+            ausweichenLabel.config(text=ausweichen)
+            initiativeLabel.config(text=initative)
+            
             
             
             KörperkraftLabel.config(text=eigenschaften["KK"])
@@ -461,15 +485,19 @@ class PageRandomeNPC(ttk.Frame):
         ttk.Label(mainFrame,text="Alter").grid(row=5,column=1,pady=abstandy,sticky='w')
         ttk.Label(mainFrame,text="Lebenspunkte").grid(row=6,column=1,pady=abstandy,sticky='w')        
         ttk.Label(mainFrame,text="Rüstung").grid(row=7,column=1,pady=abstandy,sticky='w')
-        ttk.Label(mainFrame,text="Angriffswert").grid(row=8,column=1,pady=abstandy,sticky='w')
-        ttk.Label(mainFrame,text="Verteidigungswert").grid(row=9,column=1,pady=abstandy,sticky='w')
+        ttk.Label(mainFrame,text="Primärkampfwert").grid(row=8,column=1,pady=abstandy,sticky='w')
+        ttk.Label(mainFrame,text="Paradewert").grid(row=9,column=1,pady=abstandy,sticky='w')
         ttk.Label(mainFrame,text="Waffenschaden").grid(row=10,column=1,pady=abstandy,sticky='w')
         ttk.Label(mainFrame,text="Waffe").grid(row=11,column=1,pady=abstandy,sticky='w')
-        ttk.Label(mainFrame,text="Körperbeherschung").grid(row=12,column=1,pady=abstandy,sticky='w')
+        ttk.Label(mainFrame,text="Initiative").grid(row=12,column=1,pady=abstandy,sticky='w')
         ttk.Label(mainFrame,text="Schmerzstufe 1").grid(row=13,column=1,pady=abstandy,sticky='w')
         ttk.Label(mainFrame,text="Schmerzstufe 2").grid(row=14,column=1,pady=abstandy,sticky='w')
         ttk.Label(mainFrame,text="Schmerzstufe 3").grid(row=15,column=1,pady=abstandy,sticky='w')
         ttk.Label(mainFrame,text="Flucht LeP").grid(row=16,column=1,pady=abstandy,sticky='w')
+        ttk.Label(mainFrame,text="Seelenkraft").grid(row=18,column=1,pady=abstandy,sticky='w')
+        ttk.Label(mainFrame,text="Zähigkeit").grid(row=20,column=1,pady=abstandy,sticky='w')
+        ttk.Label(mainFrame,text="Ausweichen").grid(row=22,column=1,pady=abstandy,sticky='w')
+       
         
         #Eigenschaften 
         ttk.Label(mainFrame,text="Eigenschafte",font="helvetica 10 bold").grid(row=1,column=3,pady=abstandy,sticky='w')
@@ -520,8 +548,8 @@ class PageRandomeNPC(ttk.Frame):
         dmgLabel.grid(row=10,column=2)
         waffeLabel=ttk.Label(mainFrame,text="")
         waffeLabel.grid(row=11,column=2)
-        beherschungLabel=ttk.Label(mainFrame,text="")
-        beherschungLabel.grid(row=12,column=2)
+        initiativeLabel=ttk.Label(mainFrame,text="")
+        initiativeLabel.grid(row=12,column=2)
         a1Label=ttk.Label(mainFrame,text="")
         a1Label.grid(row=13,column=2)
         a2Label=ttk.Label(mainFrame,text="")
@@ -530,6 +558,14 @@ class PageRandomeNPC(ttk.Frame):
         a3Label.grid(row=15,column=2)
         fluchtLabel=ttk.Label(mainFrame,text="")
         fluchtLabel.grid(row=16,column=2)
+        seelenkraftLabel=ttk.Label(mainFrame,text="")
+        seelenkraftLabel.grid(row=18,column=2)
+        zaehigkeitLabel=ttk.Label(mainFrame,text="")
+        zaehigkeitLabel.grid(row=20,column=2)
+        ausweichenLabel=ttk.Label(mainFrame,text="")
+        ausweichenLabel.grid(row=22,column=2)
+     
+        
         
         #Eigenschaften Label
         KörperkraftLabel=ttk.Label(mainFrame,text="")
